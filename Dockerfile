@@ -15,7 +15,12 @@ RUN apt-get -q -y update && apt-get -q -y upgrade && DEBIAN_FRONTEND=noninteract
         python-virtualenv \
         libpq-dev \
         git-core \
+	libffi-dev \
 	&& apt-get -q clean
+#-------------CKAN ext ldap dependencies----------------------------------------------------
+
+RUN apt-get install -y python-dev libldap2-dev libsasl2-dev libssl-dev gcc
+RUN pip install python-ldap
 
 # SetUp Virtual Environment CKAN
 RUN mkdir -p $CKAN_HOME $CKAN_CONFIG $CKAN_STORAGE_PATH
@@ -38,8 +43,15 @@ RUN ckan-pip install --upgrade urllib3
 ADD . $CKAN_HOME/src/ckan/
 RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
+#COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
+
+# Setup LDAP ckan Plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
 
 # SetUp EntryPoint
+COPY ./contrib/docker/wait-for-it.sh /
+RUN chmod +x /wait-for-it.sh
 COPY ./contrib/docker/ckan-entrypoint.sh /
 RUN chmod +x /ckan-entrypoint.sh
 ENTRYPOINT ["/ckan-entrypoint.sh"]

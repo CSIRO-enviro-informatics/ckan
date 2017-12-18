@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash 
+
 set -e
 
 # URL for the primary database, in the format expected by sqlalchemy (required
@@ -22,20 +23,37 @@ set_environment () {
   export CKAN_REDIS_URL=${CKAN_REDIS_URL}
   export CKAN_STORAGE_PATH=${CKAN_STORAGE_PATH}
   export CKAN_SITE_URL=${CKAN_SITE_URL}
+  export CKAN_DEFAULT_ADMIN=${CKAN_SITE_URL}
+  export CKAN_LDAP_PASSWORD=${CKAN_LDAP_PASSWORD}
 }
 
 write_config () {
+  echo "Writing Config" 
+  printenv 
+  echo "$CKAN_LDAP_PASSWORD" 
   # Note that this only gets called if there is no config, see below!
   ckan-paster make-config --no-interactive ckan "$CONFIG"
 
   # The variables above will be used by CKAN, but
   # in case want to use the config from ckan.ini use this
-  #ckan-paster --plugin=ckan config-tool "$CONFIG" -e \
-  #    "sqlalchemy.url = ${CKAN_SQLALCHEMY_URL}" \
-  #    "solr_url = ${CKAN_SOLR_URL}" \
-  #    "ckan.redis.url = ${CKAN_REDIS_URL}" \
-  #    "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
-  #    "ckan.site_url = ${CKAN_SITE_URL}"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" -e \
+      "sqlalchemy.url = ${CKAN_SQLALCHEMY_URL}" \
+      "solr_url = ${CKAN_SOLR_URL}" \
+      "ckan.redis.url = ${CKAN_REDIS_URL}" \
+      "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
+      "ckan.site_url = ${CKAN_SITE_URL}" \
+  
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.uri = ldap://pool.ldap.csiro.au:389" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.base_dn = ou=People,dc=nexus,dc=csiro,dc=au" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.search.filter = uid={login}" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.email = mail" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.username = uid" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.dn = sa-clw-ad-access@csiro.au" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap"
 }
 
 link_postgres_url () {
@@ -85,7 +103,14 @@ fi
 
 set_environment
 
+#. ./wait-for-it.sh -t 0 -h http://solr -p 8983 -- echo "solr is up"
+
+./wait-for-it.sh -t 0 -h solr -p 8983 -- echo "solr is up"
+
+echo "Initializing plugins and database"
+
 # Initializes the Database
 ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
+ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 
 exec "$@"
