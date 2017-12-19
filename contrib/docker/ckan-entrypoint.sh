@@ -106,6 +106,7 @@ set_environment
 #. ./wait-for-it.sh -t 0 -h http://solr -p 8983 -- echo "solr is up"
 
 ./wait-for-it.sh -t 0 -h solr -p 8983 -- echo "solr is up"
+./wait-for-it.sh -t 0 -h db -p 5432 -- echo "db is up"
 
 echo "Initializing plugins and database"
 
