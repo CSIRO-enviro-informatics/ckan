@@ -6,5 +6,8 @@ RUN echo "host all  all    0.0.0.0/0  md5" >> /var/lib/postgresql/data/pg_hba.co
 
 # Customize default user/pass/db
 ENV POSTGRES_USER ckan
-ENV POSTGRES_PASSWORD ckan
+ENV POSTGRES_PASSWORD default_password
 ENV POSTGRES_DB ckan
+
+# Include datastore setup scripts
+ADD ./contrib/docker/postgresql/docker-entrypoint-initdb.d /docker-entrypoint-initdb.d

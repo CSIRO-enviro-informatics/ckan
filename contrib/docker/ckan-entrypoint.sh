@@ -25,6 +25,8 @@ set_environment () {
   export CKAN_SITE_URL=${CKAN_SITE_URL}
   export CKAN_DEFAULT_ADMIN=${CKAN_SITE_URL}
   export CKAN_LDAP_PASSWORD=${CKAN_LDAP_PASSWORD}
+  export CKAN_DATASTORE_WRITE_URL=${CKAN_DATASTORE_WRITE_URL}
+  export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
 }
 
 write_config () {
@@ -53,7 +55,18 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap digitalassetfields"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap datastore digitalassetfields"
+  #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
+  #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
+}
+
+link_datastore_postgres_url () {
+  local user=$DB_ENV_POSTGRES_USER
+  local pass=$DB_ENV_POSTGRES_PASSWORD
+  local db=datastore
+  local host=$DB_PORT_5432_TCP_ADDR
+  local port=$DB_PORT_5432_TCP_PORT
+  echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
 }
 
 link_postgres_url () {
