@@ -49,6 +49,10 @@ RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
 
+# Setup DAMC digital assets ckan Plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-digitalassetfields/requirements.txt
+
 # SetUp EntryPoint
 COPY ./contrib/docker/wait-for-it.sh /
 RUN chmod +x /wait-for-it.sh
