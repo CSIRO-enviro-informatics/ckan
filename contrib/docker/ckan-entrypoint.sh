@@ -58,7 +58,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.role = editor"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap datastore digitalassetfields"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap datastore digitalassetfields csiro_hub_theme"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -69,6 +69,10 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_user_via_api = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_user_via_web = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.roles_that_cascade_to_sub_groups = admin"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_title = CSIRO Digital Asset Registry"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_logo = /images/csiro-lw-digital-asset-reg.png"
+
 
   #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
   #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"

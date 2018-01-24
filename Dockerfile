@@ -53,6 +53,9 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-digitalassetfields/requirements.txt
 
+# Setup DAMC themes
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-csiro_hub_theme.git#egg=ckanext-csiro_hub_theme
+
 # SetUp EntryPoint
 COPY ./contrib/docker/wait-for-it.sh /
 RUN chmod +x /wait-for-it.sh
