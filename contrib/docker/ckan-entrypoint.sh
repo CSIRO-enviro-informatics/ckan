@@ -72,6 +72,8 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_title = CSIRO Digital Asset Registry"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_logo = /images/csiro-lw-digital-asset-reg.png"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
+
 
 
   #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
