@@ -27,7 +27,6 @@ ckan:
       - CKAN_DATAPUSHER_URL=http://datapusher:8800
 
 datapusher:
-   container_name: datapusher
    image: clementmouchet/datapusher
    ports:
      - "8801:8800"
