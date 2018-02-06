@@ -4,13 +4,13 @@
 # started up quickly enough. Just do "docker-compose up ckan"
 # again to retry
 ckan:
-   container_name: ckan
    # Note, if you are working on CKAN core, change this to
    build: ../../
    links:
       - db
       - solr
       - redis
+      - datapusher 
    ports:
       - "8081:5000"
    environment:
@@ -24,7 +24,7 @@ ckan:
       - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
       - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
       - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
-      - CKAN_DATAPUSHER_URL=http://datapusher:8801
+      - CKAN_DATAPUSHER_URL=http://datapusher:8800
 
 datapusher:
    container_name: datapusher
@@ -32,8 +32,12 @@ datapusher:
    ports:
      - "8801:8800"
 
+datapusher:
+   image: clementmouchet/datapusher
+   ports:
+     - "8894:8800"
+
 db:
-  container_name: db
   build: postgresql/
   environment:
      - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
@@ -45,9 +49,7 @@ db:
         # environment:
   
 solr:
-  container_name: solr
   image: ckan/solr:latest
       
 redis:
-  container_name: redis
   image: redis:latest
