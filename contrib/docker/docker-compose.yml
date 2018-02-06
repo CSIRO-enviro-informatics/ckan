@@ -32,11 +32,6 @@ datapusher:
    ports:
      - "8801:8800"
 
-datapusher:
-   image: clementmouchet/datapusher
-   ports:
-     - "8894:8800"
-
 db:
   build: postgresql/
   environment:
