@@ -29,13 +29,47 @@ ckan:
 datapusher:
    image: clementmouchet/datapusher
    ports:
-     - "${DATAPUSHER_HOST_PORT}:8800"
+      - "${DATAPUSHER_HOST_PORT}:8800"
 
 db:
   build: postgresql/
   environment:
-     - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
-     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+ckan_postgres_backup:
+  image: prodrigestivill/postgres-backup-local
+  volumes:
+      - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
+  links:
+      - db
+  environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=ckan
+      - POSTGRES_USER=ckan
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_EXTRA_OPTS=--format=custom
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+
+datastore_postgres_backup:
+  image: prodrigestivill/postgres-backup-local
+  volumes:
+      - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
+  links:
+      - db
+  environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=datastore
+      - POSTGRES_USER=ckan
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_EXTRA_OPTS=--format=custom
+      - SCHEDULE=@every 10s
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
   
 solr:
   image: ckan/solr:latest
