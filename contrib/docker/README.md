@@ -22,3 +22,12 @@ CKAN_LDAP_PASSWORD=[LDAP PASSWORD]
 
 docker-compose up
 
+
+# Backup and Restore 
+
+docker-compose stop ckan
+docker-compose run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
+docker-compose run -e PGPASSWORD='default_password' --entrypoint='/bin/bash -c' db_restore 'pg_restore --verbose --clean --if-exists -U ckan -d ckan -h db < "/backups/daily/[backup file name]"'
+docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
+docker-compose up -d ckan 
+
