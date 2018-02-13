@@ -11,8 +11,8 @@ services:
         - type: volume
           source: ckan_config
           target: /etc/ckan/default
-        - type: volume
-          source: ckan_file_store
+        - type: bind 
+          source: ${HOST_FILE_STORE}
           target: /var/lib/ckan
      ports:
         - "${CKAN_HOST_PORT}:5000"
@@ -39,19 +39,20 @@ services:
      ports:
         - "${DATAPUSHER_HOST_PORT}:8800"
 
-  db_restore:
-    image: postgres
-    links: 
-        - db
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
-    command: '/bin/bash -c "exit"' 
-
   db:
     build: postgresql/
     environment:
         - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  restore:
+    build: restore/
+    links: 
+        - db
+    volumes:
+        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups/ckan
+        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups/datastore
+    command: 'true'
 
   ckan_postgres_backup:
     image: prodrigestivill/postgres-backup-local
@@ -95,4 +96,3 @@ services:
 
 volumes:
   ckan_config:
-  ckan_file_store:
