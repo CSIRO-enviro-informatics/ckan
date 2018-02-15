@@ -25,6 +25,8 @@ CKAN_PORT=5000 # internal port can be left at 5000
 DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of the box but should be changed for prod deployments
 POSTGRES_PASSWORD=default_password
 CKAN_LDAP_PASSWORD=[the ldap password]
+CKAN_LDAP_PASSWORD=[the ldap password]
+CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging
 
 # Instructions
 
