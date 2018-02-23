@@ -12,6 +12,6 @@ if [ "$1" == "" ]; then
     fi
 fi
 
-cp ../../../damc-ckan-env/.env ../
+cp ../../../.env ../
 
 sh ./deployment_scripts/docker_refresh_all.sh ./../docker-compose.yml
