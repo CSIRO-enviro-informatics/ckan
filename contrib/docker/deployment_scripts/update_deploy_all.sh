@@ -12,7 +12,6 @@ if [ "$1" == "" ]; then
     fi
 fi
 
-#sh ./deployment_scripts/update_all_repos.sh Not required for use with Jenkins as the repo will be already updated by Jenkins
-cp ../../../../damc-ckan-env/.env ../
+cp ../../../damc-ckan-env/.env ../
 
-sh ./deployment_scripts/docker_refresh_all.sh ../docker-compose.yml
+sh ./deployment_scripts/docker_refresh_all.sh ./../docker-compose.yml
