@@ -17,6 +17,9 @@ services:
         - type: bind 
           source: ${HOST_FILE_STORE}
           target: /var/lib/ckan
+        - type: volume 
+          source: ckan_entrypoint
+          target: /entrypoint
      ports:
         - "${CKAN_HOST_PORT}:5000"
      environment:
