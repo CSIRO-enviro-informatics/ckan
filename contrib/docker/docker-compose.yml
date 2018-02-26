@@ -66,7 +66,7 @@ services:
         - POSTGRES_USER=ckan
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@every 30s
+        - SCHEDULE=@daily
         - BACKUP_KEEP_DAYS=7
         - BACKUP_KEEP_WEEKS=4
         - BACKUP_KEEP_MONTHS=6
@@ -83,7 +83,7 @@ services:
         - POSTGRES_USER=ckan
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@every 30s
+        - SCHEDULE=@daily
         - BACKUP_KEEP_DAYS=7
         - BACKUP_KEEP_WEEKS=4
         - BACKUP_KEEP_MONTHS=6
