@@ -15,4 +15,5 @@ fi
 cp ../../../.env ../
 chmod +x docker_refresh_all.sh
 cd ..
+docker-compose rm -v
 sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml
