@@ -89,7 +89,7 @@ services:
         - BACKUP_KEEP_MONTHS=6
     
   solr:
-    image: ckan/solr:latest
+    build: solr/
         
   redis:
     image: redis:latest
