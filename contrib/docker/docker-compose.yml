@@ -72,7 +72,7 @@ services:
         - BACKUP_KEEP_MONTHS=6
 
   datastore_postgres_backup:
-    build: postgres-backups/
+    build: postgres_backups/
     volumes:
         - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
     links:
