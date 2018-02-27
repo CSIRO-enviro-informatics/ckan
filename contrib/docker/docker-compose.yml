@@ -55,7 +55,7 @@ services:
     command: 'true'
 
   ckan_postgres_backup:
-    build: postgres-backups/
+    build: postgres_backups/
     volumes:
         - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
     links:
