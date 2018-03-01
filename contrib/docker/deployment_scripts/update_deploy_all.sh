@@ -14,7 +14,12 @@ fi
 
 echo 'where am I'
 pwd
-cp ../../../.env ../
-chmod +x docker_refresh_all.sh
-cd ..
-sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml
+
+if [ ! -f ../../../.env ]; then
+    echo ".env file not found!"
+else
+    cp ../../../.env ../
+    chmod +x docker_refresh_all.sh
+    cd ..
+    sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml
+fi
