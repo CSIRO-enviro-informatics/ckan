@@ -21,7 +21,7 @@ if [ ! -f ../../../.env ]; then
     chmod +x bring_down_containers.sh
     cd ..
     sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml
-    exit 1
+    return 1
 else
     cp ../../../.env ../
     chmod +x docker_refresh_all.sh
