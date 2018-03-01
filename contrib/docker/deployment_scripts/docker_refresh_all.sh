@@ -8,5 +8,6 @@ if [ -z $COMPOSE_FILE ]; then
 fi
 
 docker-compose -f $COMPOSE_FILE stop
+docker-compose rm -v -f
 docker-compose -f $COMPOSE_FILE build --no-cache
 docker-compose -f $COMPOSE_FILE up -d
