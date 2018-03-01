@@ -15,7 +15,7 @@ fi
 echo 'where am I'
 pwd
 
-if [ ! -f ../../../.env ]; then
+if [ ! -f /OSM/MEL/LW_OZNOME/apps/testckan/.env ]; then
     echo "ERROR - .env file not found!.  Stopping all containers"
     #stop old containers there is a issue with deployment
     chmod +x bring_down_containers.sh
@@ -23,7 +23,7 @@ if [ ! -f ../../../.env ]; then
     sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml
     return 1
 else
-    cp ../../../.env ../
+    cp /OSM/MEL/LW_OZNOME/apps/testckan/.env ../
     chmod +x docker_refresh_all.sh
     cd ..
     sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml
