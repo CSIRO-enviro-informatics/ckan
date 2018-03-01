@@ -18,6 +18,8 @@ pwd
 if [ ! -f ../../../.env ]; then
     echo "ERROR - .env file not found!.  Stopping all containers"
     #stop old containers there is a issue with deployment
+    chmod +x bring_down_containers.sh
+    cd ..
     sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml
     exit 1
 else
