@@ -12,6 +12,8 @@ if [ "$1" == "" ]; then
     fi
 fi
 
+echo 'where am I'
+pwd
 cp ../../../.env ../
 chmod +x docker_refresh_all.sh
 cd ..
