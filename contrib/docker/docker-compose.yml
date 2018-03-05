@@ -55,7 +55,7 @@ services:
     command: 'true'
 
   ckan_postgres_backup:
-    image: prodrigestivill/postgres-backup-local
+    build: postgres_backups/
     volumes:
         - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
     links:
@@ -72,7 +72,7 @@ services:
         - BACKUP_KEEP_MONTHS=6
 
   datastore_postgres_backup:
-    image: prodrigestivill/postgres-backup-local
+    build: postgres_backups/
     volumes:
         - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
     links:
@@ -89,7 +89,7 @@ services:
         - BACKUP_KEEP_MONTHS=6
     
   solr:
-    image: ckan/solr:latest
+    build: solr/
         
   redis:
     image: redis:latest
