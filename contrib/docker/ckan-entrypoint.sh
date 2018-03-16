@@ -57,8 +57,10 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.role = editor"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
@@ -68,7 +70,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.user_create_organizations = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.user_delete_groups = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.user_delete_organizations = true"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_user_via_api = false"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_user_via_api = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_user_via_web = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.roles_that_cascade_to_sub_groups = admin"
 
