@@ -28,8 +28,9 @@ CKAN_LDAP_PASSWORD=[the ldap password]
 
 # Instructions
 
-docker-compose up
-
+```
+docker-compose up -d
+```
 
 # Backup and Restore 
 
@@ -41,7 +42,7 @@ CKAN's file store is assumed to be on a backed up file system and can be specifi
 ## Restore 
 
 To Restore the CKAN and datapusher datbases 
-
+```
 docker-compose stop ckan
 docker-compose run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
 docker-compose run -e PGPASSWORD='default_password' -e BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
@@ -51,3 +52,4 @@ docker-compose run -e CONFIRM_RESTORE='Y' -e PGPASSWORD='default_password' -e CK
 docker-compose run -e PGPASSWORD='default_password' -e DATASTORE_BACKUP_FILE_NAME='[backup file name]' CKAN_BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
 docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
 docker-compose up -d ckan 
+```
