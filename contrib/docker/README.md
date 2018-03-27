@@ -32,6 +32,11 @@ CKAN_LDAP_PASSWORD=[the ldap password]
 docker-compose up -d
 ```
 
+To clean installation
+```
+$ docker-compose down -v 
+```
+
 # Backup and Restore 
 
 ## Backup 
