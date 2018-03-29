@@ -53,6 +53,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.username = uid" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.dn = sa-clw-ad-access@csiro.au" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" 
+
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
@@ -61,6 +62,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.role = editor"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
@@ -77,6 +79,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_title = CSIRO Digital Asset Registry"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.site_logo = /images/csiro-lw-digital-asset-reg.png"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "licenses_group_url = http://staticcontent/licenses.json"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
