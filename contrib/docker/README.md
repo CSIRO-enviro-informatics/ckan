@@ -53,3 +53,7 @@ docker-compose run -e PGPASSWORD='default_password' -e DATASTORE_BACKUP_FILE_NAM
 docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
 docker-compose up -d ckan 
 ```
+
+# Adding licenses
+
+Add licenses in the static_content/public/licenses.json file. 
