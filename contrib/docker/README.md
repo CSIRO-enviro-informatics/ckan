@@ -32,6 +32,11 @@ CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port
 docker-compose up -d
 ```
 
+To clean installation
+```
+$ docker-compose down -v 
+```
+
 # Backup and Restore 
 
 ## Backup 
