@@ -1,3 +1,15 @@
+
+This is the DAMBusters CKAN fork from the 2.7.2 Tag
+
+This fork:
+
+Provides a functional docker-compose deployment through fixes to the CKAN contrib/docker process
+Installs a selection of existing and custom plugins for DAMC data audits via modifications to the ckan-entrypoint.sh
+Provides a backup and restore mechanisms leveraging the docker-compose deployment
+
+Details of deployment are in contrib/docker/README.md
+
+
 CKAN: The Open Source Data Portal Software
 ==========================================
 
