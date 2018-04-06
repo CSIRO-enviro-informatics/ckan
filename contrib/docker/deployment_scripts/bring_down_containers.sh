@@ -6,4 +6,4 @@ if [ -z $COMPOSE_FILE ]; then
 fi
 
 docker-compose -f $COMPOSE_FILE stop
-docker-compose rm -v -f
+docker-compose down -v

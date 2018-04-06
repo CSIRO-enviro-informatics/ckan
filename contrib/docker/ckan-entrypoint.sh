@@ -18,6 +18,7 @@ abort () {
 }
 
 set_environment () {
+  export CKAN_REMOTE_DEBUG_IP=${CKAN_REMOTE_DEBUG_IP}
   export CKAN_SQLALCHEMY_URL=${CKAN_SQLALCHEMY_URL}
   export CKAN_SOLR_URL=${CKAN_SOLR_URL}
   export CKAN_REDIS_URL=${CKAN_REDIS_URL}
@@ -55,6 +56,7 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
@@ -62,7 +64,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -79,6 +81,9 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "licenses_group_url = http://staticcontent/licenses.json"
 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
 
 
   #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"

@@ -1,106 +1,53 @@
-version: "3.2"
-services: 
-  ckan:
-     build: ../../
-     links:
-        - db
-        - solr
-        - redis
-        - datapusher 
-        - staticcontent
-     volumes:
-        - type: volume
-          source: ckan_config
-          target: /etc/ckan/default
-        - type: bind 
-          source: ${HOST_FILE_STORE}
-          target: /var/lib/ckan
-     ports:
-        - "${CKAN_HOST_PORT}:5000"
-     environment:
-        - DB_PORT_5432_TCP_ADDR=db
-        - DB_PORT_5432_TCP_PORT=5432
-        - SOLR_PORT_8983_TCP_ADDR=solr
-        - SOLR_PORT_8983_TCP_PORT=8983
-        - REDIS_PORT_6379_TCP_PORT=6379
-        - REDIS_PORT_6379_TCP_ADDR=redis
-        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}:${CKAN_HOST_PORT}
-        - CKAN_PORT=$CKAN_PORT
-        - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
-        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
-        - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-        - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
-        - CKAN_DATAPUSHER_URL=http://datapusher:8800
-        - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - DB_ENV_POSTGRES_USER=ckan
+# docker-compose build && docker-compose up
+# If you experience problems with the CKAN container not being
+# able to connect to the DB, then most likely the DB has not
+# started up quickly enough. Just do "docker-compose up ckan"
+# again to retry
+ckan:
+   # Note, if you are working on CKAN core, change this to
+   build: ../../
+   links:
+      - db
+      - solr
+      - redis
+      - datapusher 
+      - staticcontent 
+   ports:
+      - "8081:5000"
+   environment:
+      - DB_PORT_5432_TCP_ADDR=db
+      - SOLR_PORT_8983_TCP_ADDR=solr
+      - REDIS_PORT_6379_TCP_ADDR=redis
+      - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
+      - CKAN_PORT=80
+      - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
+      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
+      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+      - CKAN_DATAPUSHER_URL=http://datapusher:8800
 
-  datapusher:
-     image: clementmouchet/datapusher
-     ports:
-        - "${DATAPUSHER_HOST_PORT}:8800"
+datapusher:
+   image: clementmouchet/datapusher
+   ports:
+     - "${DATAPUSHER_HOST_PORT}:8800"
 
-  db:
-    build: postgresql/
-    environment:
-        - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-        - "5432:5432"
+db:
+  build: postgresql/
+  environment:
+     - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  ports:
+     - "5432:5432"
+
+staticcontent:
+  build: static_content/
+  ports:
+     - 8889:80
+
   
-  staticcontent:
-    build: static_content/
-    ports:
-        - 8889:80
-
-  restore:
-    build: restore/
-    links: 
-        - db
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups/ckan
-        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups/datastore
-    command: 'true'
-
-  ckan_postgres_backup:
-    build: postgres_backups/
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
-    links:
-        - db
-    environment:
-        - POSTGRES_HOST=db
-        - POSTGRES_DB=ckan
-        - POSTGRES_USER=ckan
-        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@daily
-        - BACKUP_KEEP_DAYS=7
-        - BACKUP_KEEP_WEEKS=4
-        - BACKUP_KEEP_MONTHS=6
-
-  datastore_postgres_backup:
-    build: postgres_backups/
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
-    links:
-        - db
-    environment:
-        - POSTGRES_HOST=db
-        - POSTGRES_DB=datastore
-        - POSTGRES_USER=ckan
-        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@daily
-        - BACKUP_KEEP_DAYS=7
-        - BACKUP_KEEP_WEEKS=4
-        - BACKUP_KEEP_MONTHS=6
-    
-  solr:
-    build: solr/
-        
-  redis:
-    image: redis:latest
-
-volumes:
-  ckan_config:
+solr:
+  image: ckan/solr:latest
+      
+redis:
+  image: redis:latest
