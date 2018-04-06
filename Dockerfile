@@ -45,9 +45,16 @@ RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
+# Setup Remote Debugging for Pycharm 
+RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd 
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-dev.git#egg=ckanext-dev
+
 # Setup LDAP ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
+
+# Setup ckanext-org ckan Plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
 
 # Setup DAMC digital assets ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
@@ -59,12 +66,17 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.co
 # SetUp EntryPoint
 COPY ./contrib/docker/wait-for-it.sh /
 RUN chmod +x /wait-for-it.sh
-COPY ./contrib/docker/ckan-entrypoint.sh /
-RUN chmod +x /ckan-entrypoint.sh
+RUN mkdir /entrypoint
+COPY ./contrib/docker/ckan-entrypoint.sh /entrypoint/
+RUN chmod +x /entrypoint/ckan-entrypoint.sh
+RUN ln -s /entrypoint/ckan-entrypoint.sh  /
 ENTRYPOINT ["/ckan-entrypoint.sh"]
 
+
 # Volumes
+VOLUME ["/entrypoint"]
 VOLUME ["/etc/ckan/default"]
+VOLUME ["/usr/lib/ckan"]
 VOLUME ["/var/lib/ckan"]
 EXPOSE 5000
 CMD ["ckan-paster","serve","/etc/ckan/default/ckan.ini"]
