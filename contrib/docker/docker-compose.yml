@@ -12,13 +12,13 @@ ckan:
       - redis
       - datapusher 
    ports:
-      - "${CKAN_HOST_PORT}:5000"
+      - "8081:5000"
    environment:
       - DB_PORT_5432_TCP_ADDR=db
       - SOLR_PORT_8983_TCP_ADDR=solr
       - REDIS_PORT_6379_TCP_ADDR=redis
-      - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}:${CKAN_HOST_PORT}
-      - CKAN_PORT=$CKAN_PORT
+      - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
+      - CKAN_PORT=80
       - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
@@ -36,6 +36,8 @@ db:
   environment:
      - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  ports:
+      - "5432:5432"
   
 solr:
   image: ckan/solr:latest
