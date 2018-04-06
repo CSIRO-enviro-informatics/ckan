@@ -2,15 +2,14 @@
 
 Requires Environment Variables
       
-      CKAN_SITE_URL
-      CKAN_PORT
-      DATASTORE_READONLY_PASSWORD
-      POSTGRES_PASSWORD
-      CKAN_LDAP_PASSWORD
-      HOST_BACKUP_DIR
-      HOST_FILE_STORE
-      DATAPUSHER_HOST_PORT
-      CKAN_HOST_PORT
+CKAN_HOST_PORT
+DATAPUSHER_HOST_PORT
+HOST_BACKUP_DIR
+HOST_FILE_STORE
+CKAN_SITE_BASE_URL
+CKAN_PORT
+DATASTORE_READONLY_PASSWORD
+CKAN_REMOTE_DEBUG_IP 
 
 which should be set in an local .env file especially if you are running multiple instances of ckan on the same machine 
 
@@ -25,6 +24,7 @@ CKAN_PORT=5000 # internal port can be left at 5000
 DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of the box but should be changed for prod deployments
 POSTGRES_PASSWORD=default_password
 CKAN_LDAP_PASSWORD=[the ldap password]
+CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging
 
 # Instructions
 
@@ -53,3 +53,7 @@ docker-compose run -e PGPASSWORD='default_password' -e DATASTORE_BACKUP_FILE_NAM
 docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
 docker-compose up -d ckan 
 ```
+
+# Adding licenses
+
+Add licenses in the static_content/public/licenses.json file. 
