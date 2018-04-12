@@ -28,6 +28,7 @@ set_environment () {
   export CKAN_LDAP_PASSWORD=${CKAN_LDAP_PASSWORD}
   export CKAN_DATASTORE_WRITE_URL=${CKAN_DATASTORE_WRITE_URL}
   export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
+  export MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
 }
 
 write_config () {
@@ -64,7 +65,16 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.spatial.srid = 4326"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.type = custom"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.custom.url =https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.attribution = Map tiles by MapBox"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.geoview.ol_viewer.formats = wms kml geojson gml wfs arcgis_rest"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.views.default_views = image_view webpage_view recline_grid_view geo_view"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
