@@ -1,0 +1,12 @@
+# replace dockerhost with whatever you have 172.17.0.1 pointing to in /etc/hosts
+
+version: "3.2"
+
+services:
+ ckan:    
+   extra_hosts:
+     - "dockerhost:172.17.0.1" 
+
+ datapusher:    
+   extra_hosts:
+     - "dockerhost:172.17.0.1"
