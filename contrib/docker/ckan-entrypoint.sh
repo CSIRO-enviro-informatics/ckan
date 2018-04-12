@@ -29,6 +29,7 @@ set_environment () {
   export CKAN_DATASTORE_WRITE_URL=${CKAN_DATASTORE_WRITE_URL}
   export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
   export MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+  export CKAN_DATAPUSHER_URL=${CKAN_DATAPUSHER_URL}
 }
 
 write_config () {
@@ -70,11 +71,16 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.custom.url =https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.attribution = Map tiles by MapBox"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.geoview.ol_viewer.formats = wms kml geojson gml wfs arcgis_rest"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.views.default_views = image_view webpage_view recline_grid_view geo_view"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.geoview.ol_viewer.formats = kml geojson"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.views.default_views = image_view webpage_view recline_grid_view recline_map_view geo_view pdf_view geojson_view"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.formats = csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.url = ${CKAN_DATAPUSHER_URL}"
+
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view dev ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -96,14 +102,16 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
 
 
-  #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
-  #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "sqlalchemy.url = $(link_postgres_url)"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
 }
 
 link_datastore_postgres_url () {
   local user=$DB_ENV_POSTGRES_USER
   local pass=$DB_ENV_POSTGRES_PASSWORD
-  local db=datastore
+  local db=datastore_default
   local host=$DB_PORT_5432_TCP_ADDR
   local port=$DB_PORT_5432_TCP_PORT
   echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
@@ -167,5 +175,8 @@ echo "Initializing plugins and database"
 ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
 ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
+
+export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
+ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
 
 exec "$@"
