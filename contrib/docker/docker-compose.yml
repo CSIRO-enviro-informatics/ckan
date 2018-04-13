@@ -31,7 +31,7 @@ services:
         - SOLR_PORT_8983_TCP_PORT=8983
         - REDIS_PORT_6379_TCP_PORT=6379
         - REDIS_PORT_6379_TCP_ADDR=redis
-        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}:${CKAN_HOST_PORT}
+        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
         - CKAN_PORT=$CKAN_PORT
         - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -45,7 +45,7 @@ services:
         - DB_ENV_POSTGRES_DB=ckan
 
   datapusher:
-     image: clementmouchet/datapusher
+     build: ./datapusher
      ports:
         - "${DATAPUSHER_HOST_PORT}:8800"
 
