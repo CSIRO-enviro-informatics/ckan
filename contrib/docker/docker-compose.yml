@@ -47,7 +47,7 @@ staticcontent:
 
   
 solr:
-  image: ckan/solr:latest
+  build: solr/
       
 redis:
   image: redis:latest
