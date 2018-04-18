@@ -26,11 +26,13 @@ RUN pip install python-ldap
 RUN mkdir -p $CKAN_HOME $CKAN_CONFIG $CKAN_STORAGE_PATH
 RUN virtualenv $CKAN_HOME
 RUN ln -s $CKAN_HOME/bin/pip /usr/local/bin/ckan-pip
-RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
+RUN /bin/bash -c "source $CKAN_HOME/bin/activate && $CKAN_HOME/bin/easy_install-2.7 -U \"pip==9.0.3\" \"setuptools==23.2.1\" && deactivate"
+RUN rm -f $CKAN_HOME/lib/python2.7/site-packages/setuptools-23.2.1-py2.7.egg
 
 # SetUp Requirements
 ADD ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
+RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3388
 ADD ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
@@ -45,8 +47,8 @@ RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
-# Setup Remote Debugging for Pycharm 
-RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd 
+# Setup Remote Debugging for Pycharm
+RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-dev.git#egg=ckanext-dev
 
 # Setup LDAP ckan Plugin
