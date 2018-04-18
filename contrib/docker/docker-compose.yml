@@ -41,6 +41,7 @@ services:
         - CKAN_DATAPUSHER_URL=http://datapusher:8800
         - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - DB_ENV_POSTGRES_USER=ckan
+     command: ['ckan-paster', 'serve', '--reload', '/etc/ckan/default/ckan.ini']
 
   datapusher:
      image: clementmouchet/datapusher
