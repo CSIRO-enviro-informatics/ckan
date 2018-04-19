@@ -46,6 +46,7 @@ write_config () {
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
   
+  ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.uri = ldap://pool.ldap.csiro.au:389" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.base_dn = ou=People,dc=nexus,dc=csiro,dc=au" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.search.filter = uid={login}" 
