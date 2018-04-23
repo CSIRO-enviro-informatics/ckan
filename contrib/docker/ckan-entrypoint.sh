@@ -65,7 +65,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query spatial_harvest_metadata_api"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -156,6 +156,7 @@ echo "Initializing plugins and database"
 
 # Initializes the Database
 ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
+ckan-paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
 ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
 

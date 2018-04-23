@@ -48,7 +48,6 @@ COPY ./ckan $CKAN_HOME/src/ckan/ckan
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 COPY ./requirements.txt ./dev-requirements.txt ./setup.cfg ./setup.py $CKAN_HOME/src/ckan/
 COPY ./ckanext $CKAN_HOME/src/ckan/ckanext
-RUN ls -lah $CKAN_HOME/src/ckan
 RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
@@ -63,8 +62,9 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 # Setup ckanext-org ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
 
-# Digital Assets Register Plugin depends on snippets from ckanext-spatial plugin
+# Digital Assets Register Plugin depends on ckanext-spatial plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/ckan/ckanext-spatial.git#egg=ckanext-spatial
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt
 
 # Setup DAMC digital assets ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
