@@ -58,6 +58,9 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 # Setup ckanext-org ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
 
+# Digital Assets Register Plugin depends on snippets from ckanext-spatial plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e https://github.com/ckan/ckanext-spatial#egg=ckanext-spatial
+
 # Setup DAMC digital assets ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-digitalassetfields/requirements.txt
