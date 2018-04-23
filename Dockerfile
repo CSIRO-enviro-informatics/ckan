@@ -30,21 +30,26 @@ RUN /bin/bash -c "source $CKAN_HOME/bin/activate && $CKAN_HOME/bin/easy_install-
 RUN rm -f $CKAN_HOME/lib/python2.7/site-packages/setuptools-23.2.1-py2.7.egg
 
 # SetUp Requirements
-ADD ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
+RUN mkdir -p $CKAN_HOME/src/ckan
+COPY ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
 RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3388
-ADD ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
+COPY ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/dev-requirements.txt
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3594
 RUN ckan-pip install --upgrade urllib3
 
 # SetUp CKAN
-ADD . $CKAN_HOME/src/ckan/
-RUN ckan-pip install -e $CKAN_HOME/src/ckan/
+
+COPY ./ckan $CKAN_HOME/src/ckan/ckan
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
+COPY ./requirements.txt ./dev-requirements.txt ./setup.cfg ./setup.py $CKAN_HOME/src/ckan/
+COPY ./ckanext $CKAN_HOME/src/ckan/ckanext
+RUN ls -lah $CKAN_HOME/src/ckan
+RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
 # Setup Remote Debugging for Pycharm
@@ -59,7 +64,7 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
 
 # Digital Assets Register Plugin depends on snippets from ckanext-spatial plugin
-RUN . /usr/lib/ckan/default/bin/activate && pip install -e https://github.com/ckan/ckanext-spatial#egg=ckanext-spatial
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/ckan/ckanext-spatial.git#egg=ckanext-spatial
 
 # Setup DAMC digital assets ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
