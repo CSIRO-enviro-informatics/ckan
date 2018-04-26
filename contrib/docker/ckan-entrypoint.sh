@@ -68,6 +68,7 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.spatial.srid = 4326"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.type = custom"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.search_backend = solr"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.custom.url =https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=${MAPBOX_ACCESS_TOKEN}"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.spatial.common_map.attribution = Map tiles by MapBox"
 
