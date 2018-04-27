@@ -81,7 +81,7 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view dev ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -98,7 +98,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "licenses_group_url = http://staticcontent/licenses.json"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
 
