@@ -98,7 +98,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "licenses_group_url = http://staticcontent/licenses.json"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
 

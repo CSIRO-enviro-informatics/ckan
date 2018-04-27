@@ -1,5 +1,10 @@
 version: "3.2"
 services: 
+   # docker-compose build && docker-compose up
+   # If you experience problems with the CKAN container not being
+   # able to connect to the DB, then most likely the DB has not
+   # started up quickly enough. Just do "docker-compose up ckan"
+   # again to retry
   ckan:
      build: ../../
      links:
@@ -8,23 +13,9 @@ services:
         - redis
         - datapusher 
         - staticcontent
-     volumes:
-        - type: volume 
-          source: ckan_config
-          target: /etc/ckan/default
-        - type: volume
-          source: ckan_src
-          target: /usr/lib/ckan/default/src
-        - type: bind 
-          source: ${HOST_FILE_STORE}
-          target: /var/lib/ckan
-        - type: volume 
-          source: ckan_entrypoint
-          target: /entrypoint
      ports:
         - "${CKAN_HOST_PORT}:5000"
      environment:
-        - CKAN_REMOTE_DEBUG_IP=${CKAN_REMOTE_DEBUG_IP}
         - DB_PORT_5432_TCP_ADDR=db
         - DB_PORT_5432_TCP_PORT=5432
         - SOLR_PORT_8983_TCP_ADDR=solr
@@ -32,7 +23,7 @@ services:
         - CKAN_SOLR_URL=http://${SOLR_PORT_8983_TCP_ADDR}:${SOLR_PORT_8983_TCP_PORT}/solr/ckan
         - REDIS_PORT_6379_TCP_PORT=6379
         - REDIS_PORT_6379_TCP_ADDR=redis
-        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}:${CKAN_HOST_PORT}
+        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
         - CKAN_PORT=$CKAN_PORT
         - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -46,9 +37,9 @@ services:
         - DB_ENV_POSTGRES_DB=ckan
 
   datapusher:
-     image: clementmouchet/datapusher
-     ports:
-        - "${DATAPUSHER_HOST_PORT}:8800"
+    image: clementmouchet/datapusher
+    ports:
+      - "${DATAPUSHER_HOST_PORT}:8800"
 
   db:
     build: postgresql/
@@ -56,7 +47,7 @@ services:
         - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-            - 5432:5432
+        - 5432:5432
 
   
   staticcontent:
@@ -64,71 +55,8 @@ services:
     ports:
         - 8889:80
 
-  restore:
-    build: restore/
-    links: 
-        - db
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups/ckan
-        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups/datastore
-    command: 'true'
-
-  ckan_postgres_backup:
-    build: postgres_backups/
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
-    links:
-        - db
-    environment:
-        - POSTGRES_HOST=db
-        - POSTGRES_DB=ckan
-        - POSTGRES_USER=ckan
-        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@daily
-        - BACKUP_KEEP_DAYS=7
-        - BACKUP_KEEP_WEEKS=4
-        - BACKUP_KEEP_MONTHS=6
-
-  datastore_postgres_backup:
-    build: postgres_backups/
-    volumes:
-        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
-    links:
-        - db
-    environment:
-        - POSTGRES_HOST=db
-        - POSTGRES_DB=datastore_default
-        - POSTGRES_USER=ckan
-        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        - POSTGRES_EXTRA_OPTS=--format=custom
-        - SCHEDULE=@daily
-        - BACKUP_KEEP_DAYS=7
-        - BACKUP_KEEP_WEEKS=4
-        - BACKUP_KEEP_MONTHS=6
-    
   solr:
     build: solr/
         
   redis:
     image: redis:latest
-
-  sshd:
-    image: rastasheep/ubuntu-sshd
-    ports: 
-        - "9222:22"
-    volumes:
-        - type: volume
-          source: ckan_config
-          target: /ckan_config
-        - type: volume
-          source: ckan_src
-          target: /ckan_src
-        - type: volume
-          source: ckan_entrypoint
-          target: /ckan_entrypoint
-
-volumes:
-  ckan_config:
-  ckan_src:
-  ckan_entrypoint:
