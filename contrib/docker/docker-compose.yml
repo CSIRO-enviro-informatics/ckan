@@ -37,9 +37,9 @@ services:
         - DB_ENV_POSTGRES_DB=ckan
 
   datapusher:
-    image: clementmouchet/datapusher
-    ports:
-      - "${DATAPUSHER_HOST_PORT}:8800"
+     build: ./datapusher
+     ports:
+        - "${DATAPUSHER_HOST_PORT}:8800"
 
   db:
     build: postgresql/
