@@ -22,8 +22,8 @@
 -->
 
 <!--
-     NB Please copy changes to this file into the docker build context:
-        contrib/docker/solr/schema.xml
+     NB Please copy changes to this file into the main CKAN schema:
+        ckan/config/solr/schema.xml
 -->
 
 <!-- We update the version when there is a backward-incompatible change to this

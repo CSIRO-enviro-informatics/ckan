@@ -59,10 +59,8 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.role = editor"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view recline_view dev ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query spatial_harvest_metadata_api"
