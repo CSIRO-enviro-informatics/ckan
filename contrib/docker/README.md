@@ -9,7 +9,10 @@ HOST_FILE_STORE
 CKAN_SITE_BASE_URL
 CKAN_PORT
 DATASTORE_READONLY_PASSWORD
-CKAN_REMOTE_DEBUG_IP 
+CKAN_REMOTE_DEBUG_IP
+SOLR_PORT_8983_TCP_ADDR
+SOLR_PORT_8983_TCP_PORT
+MAPBOX_ACCESS_TOKEN
 
 which should be set in an local .env file especially if you are running multiple instances of ckan on the same machine 
 
@@ -25,6 +28,10 @@ DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of 
 POSTGRES_PASSWORD=default_password
 CKAN_LDAP_PASSWORD=[the ldap password]
 CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging
+SOLR_PORT_8983_TCP_ADDR=solr # SOLR hostname or IP address. Use `solr` to point to the built SOLR container.
+SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running SOLR on a different port.
+MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins.
+
 
 # Instructions
 

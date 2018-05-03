@@ -1,53 +1,62 @@
-# docker-compose build && docker-compose up
-# If you experience problems with the CKAN container not being
-# able to connect to the DB, then most likely the DB has not
-# started up quickly enough. Just do "docker-compose up ckan"
-# again to retry
-ckan:
-   # Note, if you are working on CKAN core, change this to
-   build: ../../
-   links:
-      - db
-      - solr
-      - redis
-      - datapusher 
-      - staticcontent 
-   ports:
-      - "${CKAN_HOST_PORT}:5000"
-   environment:
-      - DB_PORT_5432_TCP_ADDR=db
-      - SOLR_PORT_8983_TCP_ADDR=solr
-      - REDIS_PORT_6379_TCP_ADDR=redis
-      - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}:${CKAN_HOST_PORT}
-      - CKAN_PORT=$CKAN_PORT
-      - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-      - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
-      - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-      - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
-      - CKAN_DATAPUSHER_URL=http://datapusher:8800
+version: "3.2"
+services: 
+   # docker-compose build && docker-compose up
+   # If you experience problems with the CKAN container not being
+   # able to connect to the DB, then most likely the DB has not
+   # started up quickly enough. Just do "docker-compose up ckan"
+   # again to retry
+  ckan:
+     build: ../../
+     links:
+        - db
+        - solr
+        - redis
+        - datapusher 
+        - staticcontent
+     ports:
+        - "${CKAN_HOST_PORT}:5000"
+     environment:
+        - DB_PORT_5432_TCP_ADDR=db
+        - DB_PORT_5432_TCP_PORT=5432
+        - SOLR_PORT_8983_TCP_ADDR=solr
+        - SOLR_PORT_8983_TCP_PORT=8983
+        - CKAN_SOLR_URL=http://${SOLR_PORT_8983_TCP_ADDR}:${SOLR_PORT_8983_TCP_PORT}/solr/ckan
+        - REDIS_PORT_6379_TCP_PORT=6379
+        - REDIS_PORT_6379_TCP_ADDR=redis
+        - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
+        - CKAN_PORT=$CKAN_PORT
+        - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
+        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+        - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
+        - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore_default
+        - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore_default
+        - CKAN_DATAPUSHER_URL=http://datapusher:8800
+        - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+        - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+        - DB_ENV_POSTGRES_USER=ckan
+        - DB_ENV_POSTGRES_DB=ckan
 
-datapusher:
-   image: clementmouchet/datapusher
-   ports:
-     - "${DATAPUSHER_HOST_PORT}:8800"
+  datapusher:
+     build: ./datapusher
+     ports:
+        - "${DATAPUSHER_HOST_PORT}:8800"
 
-db:
-  build: postgresql/
-  environment:
-     - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
-     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  ports:
-     - "5432:5432"
-
-staticcontent:
-  build: static_content/
-  ports:
-     - 8889:80
+  db:
+    build: postgresql/
+    environment:
+        - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+        - 5432:5432
 
   
-solr:
-  build: solr/
-      
-redis:
-  image: redis:latest
+  staticcontent:
+    build: static_content/
+    ports:
+        - 8889:80
+
+  solr:
+    build: solr/
+        
+  redis:
+    image: redis:latest
