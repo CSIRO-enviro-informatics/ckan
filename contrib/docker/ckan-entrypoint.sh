@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 set -e
 
@@ -33,9 +33,9 @@ set_environment () {
 }
 
 write_config () {
-  echo "Writing Config" 
-  printenv 
-  echo "$CKAN_LDAP_PASSWORD" 
+  echo "Writing Config"
+  printenv
+  echo "$CKAN_LDAP_PASSWORD"
   # Note that this only gets called if there is no config, see below!
   ckan-paster make-config --no-interactive ckan "$CONFIG"
 
@@ -47,19 +47,19 @@ write_config () {
       "ckan.redis.url = ${CKAN_REDIS_URL}" \
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
-  
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.uri = ldap://pool.ldap.csiro.au:389" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.base_dn = ou=People,dc=nexus,dc=csiro,dc=au" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.search.filter = uid={login}" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.email = mail" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.username = uid" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.dn = sa-clw-ad-access@csiro.au" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" 
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true" 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true" 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.uri = ldap://pool.ldap.csiro.au:389"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.base_dn = ou=People,dc=nexus,dc=csiro,dc=au"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.search.filter = uid={login}"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.email = mail"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.username = uid"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.dn = sa-clw-ad-access@csiro.au"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.fullname = displayName"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.about = description"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.ckan_fallback = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.id = csiro"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.organization.role = editor"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cors.origin_allow_all = True"
@@ -79,7 +79,7 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query  resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_dataset_if_not_in_organization = true"
@@ -154,7 +154,7 @@ if [ -z "$CKAN_SOLR_URL" ]; then
     abort "ERROR: no CKAN_SOLR_URL specified and linked container called 'solr' was not found"
   fi
 fi
-    
+
 if [ -z "$CKAN_REDIS_URL" ]; then
   if ! CKAN_REDIS_URL=$(link_redis_url); then
     abort "ERROR: no CKAN_REDIS_URL specified and linked container called 'redis' was not found"
@@ -172,10 +172,11 @@ echo "Initializing plugins and database"
 
 # Initializes the Database
 ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
+ckan-paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
 ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
 
 export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
 ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
-
+unset PGPASSWORD
 exec "$@"
