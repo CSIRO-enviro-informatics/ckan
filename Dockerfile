@@ -46,7 +46,7 @@ RUN ckan-pip install --upgrade urllib3
 
 COPY ./ckan $CKAN_HOME/src/ckan/ckan
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
-COPY ./requirements.txt ./dev-requirements.txt ./setup.cfg ./setup.py $CKAN_HOME/src/ckan/
+COPY ./requirement-setuptools.txt ./setup.cfg ./setup.py $CKAN_HOME/src/ckan/
 COPY ./ckanext $CKAN_HOME/src/ckan/ckanext
 RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
