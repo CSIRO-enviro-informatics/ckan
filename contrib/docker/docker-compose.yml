@@ -48,13 +48,55 @@ services:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
         - 5432:5432
-
   
   staticcontent:
     build: static_content/
     ports:
         - 8889:80
 
+  restore:
+    build: restore/
+    links:
+        - db
+    volumes:
+        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups/ckan
+        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups/datastore
+    command: 'true'
+
+  ckan_postgres_backup:
+    build: postgres_backups/
+    volumes:
+        - ${HOST_BACKUP_DIR}/postgres/ckan:/backups
+    links:
+        - db
+    environment:
+        - POSTGRES_HOST=db
+        - POSTGRES_DB=ckan
+        - POSTGRES_USER=ckan
+        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+        - POSTGRES_EXTRA_OPTS=--format=custom
+        - SCHEDULE=@daily
+        - BACKUP_KEEP_DAYS=7
+        - BACKUP_KEEP_WEEKS=4
+        - BACKUP_KEEP_MONTHS=6
+
+  datastore_postgres_backup:
+    build: postgres_backups/
+    volumes:
+        - ${HOST_BACKUP_DIR}/postgres/datastore:/backups
+    links:
+        - db
+    environment:
+        - POSTGRES_HOST=db
+        - POSTGRES_DB=datastore
+        - POSTGRES_USER=ckan
+        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+        - POSTGRES_EXTRA_OPTS=--format=custom
+        - SCHEDULE=@daily
+        - BACKUP_KEEP_DAYS=7
+        - BACKUP_KEEP_WEEKS=4
+        - BACKUP_KEEP_MONTHS=6
+    
   solr:
     build: solr/
         
