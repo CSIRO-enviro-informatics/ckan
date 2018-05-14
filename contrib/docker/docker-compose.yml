@@ -88,7 +88,7 @@ services:
         - db
     environment:
         - POSTGRES_HOST=db
-        - POSTGRES_DB=datastore
+        - POSTGRES_DB=datastore_default
         - POSTGRES_USER=ckan
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - POSTGRES_EXTRA_OPTS=--format=custom
