@@ -32,20 +32,24 @@ RUN ln -s $CKAN_HOME/bin/pip /usr/local/bin/ckan-pip
 RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
 
 # SetUp Requirements
-ADD ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
+COPY ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3594
 RUN ckan-pip install --upgrade urllib3
 
 # SetUp CKAN
-ADD . $CKAN_HOME/src/ckan/
+#ADD . $CKAN_HOME/src/ckan/
+COPY ./ckan $CKAN_HOME/src/ckan/ckan
+COPY ./ckanext $CKAN_HOME/src/ckan/ckanext
+COPY ./contrib $CKAN_HOME/src/ckan/contrib
+COPY ./setup.cfg ./setup.py ./requirement-setuptools.txt ./dev-requirements.txt $CKAN_HOME/src/ckan/
 RUN ckan-pip install -e $CKAN_HOME/src/ckan/
 RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
-# Setup Remote Debugging for Pycharm 
-RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd 
+# Setup Remote Debugging for Pycharm
+RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-dev.git#egg=ckanext-dev
 
 # Setup LDAP ckan Plugin
@@ -74,7 +78,7 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.co
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_ext.git#egg=ckanext-user_ext
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-ext/requirements.txt
 
-# Setup User Opt In Plugin (dependent on the User Extensions Plugin) 
+# Setup User Opt In Plugin (dependent on the User Extensions Plugin)
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_opt_in.git#egg=ckanext-user_opt_in
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-opt-in/requirements.txt
 
