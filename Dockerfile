@@ -49,7 +49,8 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-dev.git#egg=ckanext-dev
 
 # Setup LDAP ckan Plugin
-RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
+RUN . /usr/lib/ckan/default/bin/activate && pip install "Jinja2==2.9.3"
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git@v1.0.1#egg=ckanext-ldap
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
 
 # setup ckanext-spatial
