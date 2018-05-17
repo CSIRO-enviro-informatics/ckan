@@ -37,7 +37,6 @@ RUN rm -f $CKAN_HOME/lib/python2.7/site-packages/setuptools-23.2.1-py2.7.egg
 RUN mkdir -p $CKAN_HOME/src/ckan
 COPY ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
-RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3388
 COPY ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
