@@ -118,8 +118,6 @@ services:
   redis:
     image: redis:latest
 
-     image: redis:latest
-
   sshd:
     image: rastasheep/ubuntu-sshd
     ports: 
