@@ -29,6 +29,7 @@ RUN apt-get install -y libxml2-dev libxslt1-dev libgeos-c1
 RUN mkdir -p $CKAN_HOME $CKAN_CONFIG $CKAN_STORAGE_PATH
 RUN virtualenv $CKAN_HOME
 RUN ln -s $CKAN_HOME/bin/pip /usr/local/bin/ckan-pip
+RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
 RUN /bin/bash -c "source $CKAN_HOME/bin/activate && $CKAN_HOME/bin/easy_install-2.7 -U \"pip==9.0.3\" \"setuptools==23.2.1\" && deactivate"
 RUN rm -f $CKAN_HOME/lib/python2.7/site-packages/setuptools-23.2.1-py2.7.egg
 
@@ -46,12 +47,14 @@ RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/dev-requirements.txt
 RUN ckan-pip install --upgrade urllib3
 
 # SetUp CKAN
-
+#ADD . $CKAN_HOME/src/ckan/
 COPY ./ckan $CKAN_HOME/src/ckan/ckan
-RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
-COPY ./requirement-setuptools.txt ./setup.cfg ./setup.py $CKAN_HOME/src/ckan/
 COPY ./ckanext $CKAN_HOME/src/ckan/ckanext
+COPY ./contrib $CKAN_HOME/src/ckan/contrib
+COPY ./setup.cfg ./setup.py ./requirement-setuptools.txt ./dev-requirements.txt $CKAN_HOME/src/ckan/
+
 RUN ckan-pip install -e $CKAN_HOME/src/ckan/
+RUN ln -s $CKAN_HOME/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 #COPY ./contrib/docker/config/ckan.ini $CKAN_CONFIG/ckan.ini
 
 # Setup Remote Debugging for Pycharm
@@ -59,18 +62,19 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install pydevd
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-dev.git#egg=ckanext-dev
 
 # Setup LDAP ckan Plugin
-RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
+RUN . /usr/lib/ckan/default/bin/activate && pip install "Jinja2==2.9.3"
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git@v1.0.1#egg=ckanext-ldap
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
+
+# setup ckanext-spatial
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/okfn/ckanext-spatial.git#egg=ckanext-spatial
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt
 
 RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-geoview
 
 
 # Setup ckanext-org ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
-
-# Digital Assets Register Plugin depends on ckanext-spatial plugin
-RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/ckan/ckanext-spatial.git#egg=ckanext-spatial
-RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-spatial/pip-requirements.txt
 
 # Setup DAMC digital assets ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-digitalassetfields.git#egg=ckanext-digitalassetfields
@@ -83,7 +87,7 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.co
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_ext.git#egg=ckanext-user_ext
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-ext/requirements.txt
 
-# Setup User Opt In Plugin (dependent on the User Extensions Plugin) 
+# Setup User Opt In Plugin (dependent on the User Extensions Plugin)
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_opt_in.git#egg=ckanext-user_opt_in
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-opt-in/requirements.txt
 

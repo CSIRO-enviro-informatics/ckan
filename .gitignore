@@ -46,6 +46,6 @@ contrib/docker/\.env
 backups/*
 local_code/*
 
-/.idea/
-
-/venv/
+/venv
+/.idea
+.env
