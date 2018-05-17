@@ -22,6 +22,9 @@ RUN apt-get -q -y update && apt-get -q -y upgrade && DEBIAN_FRONTEND=noninteract
 RUN apt-get install -y python-dev libldap2-dev libsasl2-dev libssl-dev gcc
 RUN pip install python-ldap
 
+#CKAN spatial ext dependencies
+RUN apt-get install -y libxml2-dev libxslt1-dev libgeos-c1
+
 # SetUp Virtual Environment CKAN
 RUN mkdir -p $CKAN_HOME $CKAN_CONFIG $CKAN_STORAGE_PATH
 RUN virtualenv $CKAN_HOME
@@ -59,6 +62,9 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.co
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/NaturalHistoryMuseum/ckanext-ldap.git#egg=ckanext-ldap
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-ldap/requirements.txt
 
+RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-geoview
+
+
 # Setup ckanext-org ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
 
@@ -72,6 +78,19 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 
 # Setup DAMC themes
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-csiro_hub_theme.git#egg=ckanext-csiro_hub_theme
+
+# Setup User Extensions Plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_ext.git#egg=ckanext-user_ext
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-ext/requirements.txt
+
+# Setup User Opt In Plugin (dependent on the User Extensions Plugin) 
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_opt_in.git#egg=ckanext-user_opt_in
+RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-opt-in/requirements.txt
+
+RUN apt-get install -y postgresql-client
+
+# Other ckan views
+RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-pdfview
 
 # SetUp EntryPoint
 COPY ./contrib/docker/wait-for-it.sh /

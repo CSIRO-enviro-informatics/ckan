@@ -24,6 +24,7 @@ services:
      ports:
         - "${CKAN_HOST_PORT}:5000"
      environment:
+        - CKAN_SOLR_URL=http://${SOLR_PORT_8983_TCP_ADDR}:${SOLR_PORT_8983_TCP_PORT}/solr/ckan
         - CKAN_REMOTE_DEBUG_IP=${CKAN_REMOTE_DEBUG_IP}
         - DB_PORT_5432_TCP_ADDR=db
         - DB_PORT_5432_TCP_PORT=5432
@@ -36,15 +37,17 @@ services:
         - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - CKAN_LDAP_PASSWORD=$CKAN_LDAP_PASSWORD
-        - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
-        - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
+        - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore_default
+        - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore_default
         - CKAN_DATAPUSHER_URL=http://datapusher:8800
         - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+        - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
         - DB_ENV_POSTGRES_USER=ckan
+        - DB_ENV_POSTGRES_DB=ckan
      command: ['ckan-paster', 'serve', '--reload', '/etc/ckan/default/ckan.ini']
 
   datapusher:
-     image: clementmouchet/datapusher
+     build: ./datapusher
      ports:
         - "${DATAPUSHER_HOST_PORT}:8800"
 
@@ -95,7 +98,7 @@ services:
         - db
     environment:
         - POSTGRES_HOST=db
-        - POSTGRES_DB=datastore
+        - POSTGRES_DB=datastore_default
         - POSTGRES_USER=ckan
         - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
         - POSTGRES_EXTRA_OPTS=--format=custom
