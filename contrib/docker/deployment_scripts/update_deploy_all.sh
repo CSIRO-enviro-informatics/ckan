@@ -2,8 +2,11 @@
 
 # It is expected this script will be run from the oflw-science-graph directory as
 # . deployment_scripts/update_deploy_all.sh
+PROJECT_NAME=$1
+ENV_FILE_LOCATION=$2
+DIRECTORY_NAME=$3
 
-if [ "$1" == "" ]; then
+if [ -z $DIRECTORY_NAME ]; then
     CURRENT_DIR_NAME=${PWD##*/} 
     echo $CURRENT_DIR_NAME 
     if [ "$CURRENT_DIR_NAME" != "deployment_scripts" ]; then
@@ -12,19 +15,29 @@ if [ "$1" == "" ]; then
     fi
 fi
 
+if [ -z $PROJECT_NAME ]; then
+    echo 'project name argument missing'
+    return 1
+fi
+
+if [ -z $ENV_FILE_LOCATION ]; then
+    echo 'environment file location argument missing'
+    return 1
+fi
+
 echo 'where am I'
 pwd
 
-if [ ! -f /OSM/MEL/LW_OZNOME/apps/testckan/.env ]; then
+if [ ! -f $ENV_FILE_LOCATION ]; then
     echo "ERROR - .env file not found!.  Stopping all containers"
     #stop old containers there is a issue with deployment
-    chmod +x bring_down_containers.sh
+    chmod +x bring_down_containers.sh $PROJECT_NAME
     cd ..
     sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml
     return 1
 else
-    cp /OSM/MEL/LW_OZNOME/apps/testckan/.env ../
+    cp $ENV_FILE_LOCATION ../.env
     chmod +x docker_refresh_all.sh
     cd ..
-    sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml
+    sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml $PROJECT_NAME
 fi
