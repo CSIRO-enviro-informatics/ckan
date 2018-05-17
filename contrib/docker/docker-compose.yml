@@ -117,3 +117,26 @@ services:
         
   redis:
     image: redis:latest
+
+     image: redis:latest
+
+  sshd:
+    image: rastasheep/ubuntu-sshd
+    ports: 
+        - "9222:22"
+    volumes:
+        - type: volume
+          source: ckan_config
+          target: /ckan_config
+        - type: volume
+          source: ckan_src
+          target: /ckan_src
+        - type: volume
+          source: ckan_entrypoint
+          target: /ckan_entrypoint
+
+volumes:
+  ckan_config:
+  ckan_src:
+  ckan_entrypoint:
+
