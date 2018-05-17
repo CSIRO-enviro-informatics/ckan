@@ -31,13 +31,13 @@ pwd
 if [ ! -f $ENV_FILE_LOCATION ]; then
     echo "ERROR - .env file not found!.  Stopping all containers"
     #stop old containers there is a issue with deployment
-    chmod +x bring_down_containers.sh $PROJECT_NAME
+    chmod +x bring_down_containers.sh 
     cd ..
-    sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml
+    sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml $PROJECT_NAME
     return 1
 else
     cp $ENV_FILE_LOCATION ../.env
     chmod +x docker_refresh_all.sh
     cd ..
-    sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml $PROJECT_NAME
+    sh ./deployment_scripts/docker_refresh_all.sh docker-compose.yml $PROJECT_NAME 
 fi
