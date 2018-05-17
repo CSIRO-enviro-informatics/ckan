@@ -1,7 +1,15 @@
 # These are packages that are required by ckan developers - for running ckan in debug mode, running ckan tests, building the docs and to pip-compile the requirements.in file.
 
+Flask==0.11.1 # from requirements.txt
+Werkzeug==0.11.10 # from requirements.txt
+six==1.10.0 # from requirements.txt
+pbr==1.10.0 # from requirements.txt
+requests==2.11.1 # from requirements.txt
+MarkupSafe==0.23 # from requirements.txt
+Jinja2==2.8.0 # from requirements.txt
+Pygments==2.1.3 # from requirements.txt
 beautifulsoup4==4.5.1
-coveralls   #Let Unpinned - Requires latest coveralls
+coveralls==1.2.0
 docutils==0.12
 factory-boy==2.1.1
 Flask-DebugToolbar==0.10.0
@@ -12,5 +20,4 @@ pip-tools==1.7.0
 pyfakefs==2.9
 Sphinx==1.2.3
 sphinx-rtd-theme==0.1.9
-
-# nose==1.3.0  # already in requirements.txt
+nose==1.3.7  # from requirements.txt
