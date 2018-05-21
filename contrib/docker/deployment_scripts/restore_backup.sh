@@ -24,6 +24,6 @@ if [ -z $BACKUP_FILE_NAME ]; then
     return 1
 fi
 
-docker-compose stop ckan
-docker-compose run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
-docker-compose run -e CONFIRM_RESTORE='Y' -e PGPASSWORD='$DATABASE_PASSWORD' -e CKAN_BACKUP_FILE_NAME='$BACKUP_FILE_NAME' restore /restore.sh 
+docker-compose -p $PROJECT_NAME stop ckan
+docker-compose -p $PROJECT_NAME run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
+docker-compose -p $PROJECT_NAME run -e CONFIRM_RESTORE='Y' -e PGPASSWORD='$DATABASE_PASSWORD' -e CKAN_BACKUP_FILE_NAME='$BACKUP_FILE_NAME' restore /restore.sh 
