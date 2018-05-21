@@ -48,6 +48,9 @@ write_config () {
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
 
+  if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = true"
+  fi
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.uri = ldap://pool.ldap.csiro.au:389"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.base_dn = ou=People,dc=nexus,dc=csiro,dc=au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.search.filter = uid={login}"
@@ -76,10 +79,13 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.formats = csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.url = ${CKAN_DATAPUSHER_URL}"
 
+  if [ "$DEVENV" == "1" ] || [ "$DEVENV" == "true" ]; then
+      DEVPLUGIN="dev"
+  else
+      DEVPLUGIN=
+  fi
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.ldap.migrate = true"
-
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = $DEVPLUGIN stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
@@ -97,13 +103,14 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.favicon = /images/favicon.ico"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "licenses_group_url = http://staticcontent/licenses.json"
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = false"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
 
+  if [ "$DEVENV" == "1" ] || [ "$DEVENV" == "true" ]; then
+      ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote = true"
+      ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}"
+      ckan-paster --plugin=ckan config-tool "$CONFIG" "debug.remote.host.port = 6666"
+  fi
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "sqlalchemy.url = $(link_postgres_url)"
-
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
 }
