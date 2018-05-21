@@ -3,7 +3,7 @@ BACKUP_DIRECTORY_LOCATION=$1
 
 if [ -z $BACKUP_DIRECTORY_LOCATION ]; then
     echo 'backup directory location missing'
-    return 1
+    exit 1
 fi
 
 unset -v latest
