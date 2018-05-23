@@ -30,11 +30,14 @@ if [ -z $DATASTORE_BACKUP_FILE_NAME ]; then
     exit 1
 fi
 
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop ckan ckan_postgres_backup datastore_postgres_backup 
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop db 
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -f db
-#echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true -e CONFIRM_RESTORE='Y' -e PGPASSWORD=$DATABASE_PASSWORD -e CKAN_BACKUP_FILE_NAME=$CKAN_BACKUP_FILE_NAME -e DATASTORE_BACKUP_FILE_NAME=$DATASTORE_BACKUP_FILE_NAME restore /restore.sh 
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true ckan ckan-paster --plugin=ckan db upgrade -c /etc/ckan/default/ckan.ini
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true ckan ckan-paster --plugin=ckan search-index rebuild --config=/etc/ckan/default/ckan.ini
-echo docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d ckan
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop ckan ckan_postgres_backup datastore_postgres_backup 
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop db 
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -f db
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d db
+#Sleep to give the database time to come backup
+sleep 20s
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true -e CONFIRM_RESTORE='Y' -e PGPASSWORD=$DATABASE_PASSWORD -e CKAN_BACKUP_FILE_NAME=$CKAN_BACKUP_FILE_NAME -e DATASTORE_BACKUP_FILE_NAME=$DATASTORE_BACKUP_FILE_NAME restore /restore.sh 
+#Unclear when we might need to execute this or the side effects of uncessarily executing it
+#docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true ckan ckan-paster --plugin=ckan db upgrade -c /etc/ckan/default/ckan.ini
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run -e BYPASS_DB_INIT=true ckan ckan-paster --plugin=ckan search-index rebuild --config=/etc/ckan/default/ckan.ini
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d ckan
