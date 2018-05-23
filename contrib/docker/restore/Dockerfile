@@ -1,4 +1,4 @@
-FROM postgres:9.6.6
+FROM postgres:9.6.8
 ADD ./restore.sh /
 RUN chmod a+x restore.sh
 CMD ./restore.sh
