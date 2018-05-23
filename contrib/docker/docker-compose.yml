@@ -52,7 +52,7 @@ services:
   staticcontent:
     build: static_content/
     ports:
-        - 8889:80
+            - ${STATIC_CONTENT_HOST_PORT:-8889}:80
 
   restore:
     build: restore/
