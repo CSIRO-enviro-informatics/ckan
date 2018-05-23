@@ -54,17 +54,29 @@ CKAN's file store is assumed to be on a backed up file system and can be specifi
 
 ## Restore 
 
-To Restore the CKAN and datapusher datbases 
+To Restore the CKAN and datapusher databases 
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+
+General version
 ```
-docker-compose stop ckan
-docker-compose run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
-docker-compose run -e PGPASSWORD='default_password' -e BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-# or to restore non interactively do 
-docker-compose run -e CONFIRM_RESTORE='Y' -e PGPASSWORD='default_password' -e CKAN_BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-# to additionally restore the datastore database
-docker-compose run -e PGPASSWORD='default_password' -e DATASTORE_BACKUP_FILE_NAME='[backup file name]' CKAN_BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
-docker-compose up -d ckan 
+deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] [full path to ckan backup] [full path to datastore backup]
+```
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+Restoring the latest backup
+```
+deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] $(deployment_scripts/find_latest_backup.sh [path to ckan daily backups directory]) $(deployment_scripts/find_latest_backup.sh [path to datastore daily backups directory])
+```
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+an example 
+
+```
+deployment_scripts/restore_backup.sh docker-compose.yml restore_test default_password $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/ckan/daily) $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/datastore/daily)
 ```
 
 # Adding licenses

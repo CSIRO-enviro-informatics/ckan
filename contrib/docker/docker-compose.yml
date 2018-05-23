@@ -58,6 +58,12 @@ services:
     build: restore/
     links:
         - db
+    environment:
+        - POSTGRES_HOST=db
+        - POSTGRES_DB=ckan
+        - POSTGRES_DS_DB=datastore_default
+        - POSTGRES_USER=ckan
+        - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     volumes:
         - ${HOST_BACKUP_DIR}/postgres/ckan:/backups/ckan
         - ${HOST_BACKUP_DIR}/postgres/datastore:/backups/datastore

@@ -30,6 +30,7 @@ set_environment () {
   export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
   export MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
   export CKAN_DATAPUSHER_URL=${CKAN_DATAPUSHER_URL}
+  export BYPASS_DB_INIT=${BYPASS_DB_INIT}
 }
 
 write_config () {
@@ -169,15 +170,16 @@ set_environment
 ./wait-for-it.sh -t 0 -h solr -p 8983 -- echo "solr is up"
 ./wait-for-it.sh -t 0 -h db -p 5432 -- echo "db is up"
 
-echo "Initializing plugins and database"
+if [ -z "$BYPASS_DB_INIT" ]; then
+	echo "Initializing plugins and database"
+	# Initializes the Database
+	ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
+	ckan-paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
+	ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
+	ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
 
-# Initializes the Database
-ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
-ckan-paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
-ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
-ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
-
-export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
-ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
-unset PGPASSWORD
+	export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
+	ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
+	unset PGPASSWORD
+fi
 exec "$@"

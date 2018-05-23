@@ -17,6 +17,6 @@ then
    exit
 else
    echo "Restoring the Datastore Database"
-   pg_restore --verbose --clean --if-exists -U ckan -d datastore -h db < "/backups/datastore/daily/$DATASTORE_BACKUP_FILE_NAME"
+   pg_restore --verbose --clean --if-exists -U ckan -d datastore_default -h db < "/backups/datastore/daily/$DATASTORE_BACKUP_FILE_NAME"
 fi
 fi 
