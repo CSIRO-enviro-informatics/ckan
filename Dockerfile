@@ -30,10 +30,16 @@ RUN mkdir -p $CKAN_HOME $CKAN_CONFIG $CKAN_STORAGE_PATH
 RUN virtualenv $CKAN_HOME
 RUN ln -s $CKAN_HOME/bin/pip /usr/local/bin/ckan-pip
 RUN ln -s $CKAN_HOME/bin/paster /usr/local/bin/ckan-paster
+RUN /bin/bash -c "source $CKAN_HOME/bin/activate && $CKAN_HOME/bin/easy_install-2.7 -U \"pip==9.0.3\" \"setuptools==23.2.1\" && deactivate"
+RUN rm -f $CKAN_HOME/lib/python2.7/site-packages/setuptools-23.2.1-py2.7.egg
 
 # SetUp Requirements
+RUN mkdir -p $CKAN_HOME/src/ckan
 COPY ./requirements.txt $CKAN_HOME/src/ckan/requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
+
+COPY ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
+RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/dev-requirements.txt
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3594
 RUN ckan-pip install --upgrade urllib3

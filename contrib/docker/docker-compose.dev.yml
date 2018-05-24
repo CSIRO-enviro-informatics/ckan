@@ -1,0 +1,35 @@
+version: "3.2"
+services:
+  ckan:
+     depends_on:
+        - sshd
+     environment:
+        - DEBUG=${DEBUG:-true}
+        - DEVENV=${DEVENV:-true}
+        - CKAN_REMOTE_DEBUG_IP=${CKAN_REMOTE_DEBUG_IP:-192.168.0.1}
+     command: ['ckan-paster', 'serve', '--reload', '/etc/ckan/default/ckan.ini']
+
+  db:
+    ports:
+        - ${DB_HOST_PORT:-5432}:5432
+
+  sshd:
+    image: rastasheep/ubuntu-sshd
+    ports:
+        - "9222:22"
+    volumes:
+        - type: volume
+          source: ckan_config
+          target: /ckan_config
+        - type: volume
+          source: ckan_src
+          target: /ckan_src
+        - type: volume
+          source: ckan_entrypoint
+          target: /ckan_entrypoint
+
+volumes:
+  ckan_config:
+  ckan_src:
+  ckan_entrypoint:
+
