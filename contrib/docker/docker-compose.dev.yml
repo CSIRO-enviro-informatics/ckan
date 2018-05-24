@@ -11,7 +11,7 @@ services:
 
   db:
     ports:
-        - 5432:5432
+        - ${DB_HOST_PORT:-5432}:5432
 
   sshd:
     image: rastasheep/ubuntu-sshd

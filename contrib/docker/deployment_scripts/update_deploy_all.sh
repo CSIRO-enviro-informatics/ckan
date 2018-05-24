@@ -11,18 +11,18 @@ if [ -z $DIRECTORY_NAME ]; then
     echo $CURRENT_DIR_NAME 
     if [ "$CURRENT_DIR_NAME" != "deployment_scripts" ]; then
         echo 'must be called from deployment_scripts like deployment_scripts/scriptname.sh'
-        return 1
+        exit 1
     fi
 fi
 
 if [ -z $PROJECT_NAME ]; then
     echo 'project name argument missing'
-    return 1
+    exit 1
 fi
 
 if [ -z $ENV_FILE_LOCATION ]; then
     echo 'environment file location argument missing'
-    return 1
+    exit 1
 fi
 
 echo 'where am I'
@@ -34,7 +34,7 @@ if [ ! -f $ENV_FILE_LOCATION ]; then
     chmod +x bring_down_containers.sh 
     cd ..
     sh ./deployment_scripts/bring_down_containers.sh docker-compose.yml $PROJECT_NAME
-    return 1
+    exit 1
 else
     cp $ENV_FILE_LOCATION ../.env
     chmod +x docker_refresh_all.sh

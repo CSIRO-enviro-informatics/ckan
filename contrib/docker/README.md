@@ -30,8 +30,9 @@ CKAN_LDAP_PASSWORD=[the ldap password]
 CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging
 SOLR_PORT_8983_TCP_ADDR=solr # SOLR hostname or IP address. Use `solr` to point to the built SOLR container.
 SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running SOLR on a different port.
-MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins.
-
+MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins
+DB_HOST_PORT=[host db port] # Optionally define a custom host db port
+STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port
 
 # Instructions
 
@@ -91,17 +92,29 @@ CKAN's file store is assumed to be on a backed up file system and can be specifi
 
 ## Restore 
 
-To Restore the CKAN and datapusher datbases 
+To Restore the CKAN and datapusher databases 
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+
+General version
 ```
-docker-compose stop ckan
-docker-compose run ckan ckan-paster --plugin=ckan db clean -c /etc/ckan/default/ckan.ini
-docker-compose run -e PGPASSWORD='default_password' -e BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-# or to restore non interactively do 
-docker-compose run -e CONFIRM_RESTORE='Y' -e PGPASSWORD='default_password' -e CKAN_BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-# to additionally restore the datastore database
-docker-compose run -e PGPASSWORD='default_password' -e DATASTORE_BACKUP_FILE_NAME='[backup file name]' CKAN_BACKUP_FILE_NAME='[backup file name]' restore /restore.sh 
-docker-compose run ckan ckan-paster --plugin=ckan search-index rebuild -c /etc/ckan/default/ckan.ini
-docker-compose up -d ckan 
+deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] [full path to ckan backup] [full path to datastore backup]
+```
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+Restoring the latest backup
+```
+deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] $(deployment_scripts/find_latest_backup.sh [path to ckan daily backups directory]) $(deployment_scripts/find_latest_backup.sh [path to datastore daily backups directory])
+```
+
+WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+
+an example 
+
+```
+deployment_scripts/restore_backup.sh docker-compose.yml restore_test default_password $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/ckan/daily) $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/datastore/daily)
 ```
 
 # Adding licenses
