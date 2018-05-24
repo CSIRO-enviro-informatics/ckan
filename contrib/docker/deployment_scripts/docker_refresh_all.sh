@@ -12,7 +12,6 @@ if [ -z $PROJECT_NAME ]; then
     exit 1
 fi
 
-docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop
-docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -v -f
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE down -v --rmi --remove-orphans 
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE build --no-cache
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d
