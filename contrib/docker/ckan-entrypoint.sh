@@ -47,7 +47,7 @@ write_config () {
       "solr_url = ${CKAN_SOLR_URL}" \
       "ckan.redis.url = ${CKAN_REDIS_URL}" \
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
-      "ckan.site_url = ${CKAN_SITE_URL}" \
+      "ckan.site_url = ${CKAN_SITE_URL}"
 
   if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = true"
@@ -126,7 +126,7 @@ update_config () {
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
       "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" \
-      "debug.remote.host.ip= ${CKAN_REMOTE_DEBUG_IP}" \
+      "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
 }
 
 link_datastore_postgres_url () {
