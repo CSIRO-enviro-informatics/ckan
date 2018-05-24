@@ -126,7 +126,9 @@ update_config () {
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
       "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" \
-      "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
+      if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
+        "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
+      fi
 }
 
 link_datastore_postgres_url () {
