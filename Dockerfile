@@ -100,8 +100,12 @@ RUN mkdir /entrypoint
 COPY ./contrib/docker/ckan-entrypoint.sh /entrypoint/
 RUN chmod +x /entrypoint/ckan-entrypoint.sh
 RUN ln -s /entrypoint/ckan-entrypoint.sh  /
-ENTRYPOINT ["/ckan-entrypoint.sh"]
 
+# Add Tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--", "/ckan-entrypoint.sh"]
 
 # Volumes
 VOLUME ["/entrypoint"]
