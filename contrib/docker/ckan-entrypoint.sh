@@ -125,10 +125,10 @@ update_config () {
       "ckan.redis.url = ${CKAN_REDIS_URL}" \
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
-      "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" \
-      if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
-        "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
-      fi
+      "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" 
+  if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
+    ckan-paster --plugin=ckan config-tool "$CONFIG" -e "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
+  fi
 }
 
 link_datastore_postgres_url () {
