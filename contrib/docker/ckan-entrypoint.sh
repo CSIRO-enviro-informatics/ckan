@@ -117,15 +117,18 @@ write_config () {
 }
 
 update_config () {
-    # The variables above will be used by CKAN, but
+  # The variables above will be used by CKAN, but
   # in case want to use the config from ckan.ini use this
+  if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
+    ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = true"
+  fi
   ckan-paster --plugin=ckan config-tool "$CONFIG" -e \
       "sqlalchemy.url = ${CKAN_SQLALCHEMY_URL}" \
       "solr_url = ${CKAN_SOLR_URL}" \
       "ckan.redis.url = ${CKAN_REDIS_URL}" \
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}" \
-      "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}" 
+      "ckanext.ldap.auth.password = ${CKAN_LDAP_PASSWORD}"
   if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
     ckan-paster --plugin=ckan config-tool "$CONFIG" -e "debug.remote.host.ip = ${CKAN_REMOTE_DEBUG_IP}"
   fi
