@@ -14,7 +14,7 @@ services:
         - ${DB_HOST_PORT:-5432}:5432
 
   sshd:
-    image: rastasheep/ubuntu-sshd
+    build: sshd/
     ports:
         - "9222:22"
     volumes:
