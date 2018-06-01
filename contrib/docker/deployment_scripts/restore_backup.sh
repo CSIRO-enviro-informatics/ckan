@@ -35,7 +35,7 @@ docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop ckan ckan_postgres_backup 
 # Stop the ckan and datastore db 
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE stop db 
 # Delete the ckan database because - this is the cleanest (and possibly only working) way to get a blank slate ready for restore, the ckan-paster ckan clean command doesn't seem to be compatible with plugins 
-docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -f db
+docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -f -v db
 # Create and start an new database - this will be empty
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d db
 # Sleep to give the database time to come backup
