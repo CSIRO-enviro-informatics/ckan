@@ -193,8 +193,9 @@ fi
 set_environment
 
 create_org_and_user_membership () {
+  set +e
   export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
-  cat <<EOF | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
+  cat <<EOF | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1 || true
 INSERT INTO ckan.public.revision (id, timestamp, author, message, state)
 VALUES ('1e662e20-0c88-492d-8deb-7cac39ae6a14', (now() at time zone 'utc'), 'admin', 'Create CSIRO group and add admin user as member.', 'active')
 ON CONFLICT DO NOTHING;
@@ -216,6 +217,7 @@ VALUES ('e5c180c3-7bbf-4e9a-b060-e14a8d2e58f7', (SELECT id FROM ckan.public.user
 ON CONFLICT DO NOTHING;
 EOF
   unset PGPASSWORD
+  set -e
 }
 
 #. ./wait-for-it.sh -t 0 -h http://solr -p 8983 -- echo "solr is up"
@@ -228,9 +230,11 @@ if [ -z "$BYPASS_DB_INIT" ]; then
 	# Initializes the Database
 	ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/ckan.ini"
 	ckan-paster --plugin=ckanext-spatial spatial initdb -c "${CKAN_CONFIG}/ckan.ini"
+	set +e
 	export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
-	ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1
+	ckan-paster --plugin=ckan datastore set-permissions  -c "${CKAN_CONFIG}/ckan.ini"  | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1 || true
 	unset PGPASSWORD
+	set -e
 fi
 ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 create_org_and_user_membership
