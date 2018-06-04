@@ -40,7 +40,7 @@ docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE rm -f -v db
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE up -d db
 # Sleep to give the database time to come backup
 sleep 20s
-# Run the restore container this container is a container with postgres client tools and a restore script that uses native postgres restore mechanisms to restore ckan and datastore backup dumps that are passed in
+# Run the restore container this container is a container with postgres client tools and a restore script that uses native postgres restore mechanisms to restore ckan and datastore backup dumps that are passed in. For more detail see the ../restore/restore.sh file.
 RESTORE_NAME="restore"
 echo "Restore" 
 docker-compose -p $PROJECT_NAME -f $COMPOSE_FILE run --name $PROJECT_NAME$RESTORE_NAME -e BYPASS_DB_INIT=true -e CONFIRM_RESTORE='Y' -e PGPASSWORD=$DATABASE_PASSWORD -e CKAN_BACKUP_FILE_NAME=$CKAN_BACKUP_FILE_NAME -e DATASTORE_BACKUP_FILE_NAME=$DATASTORE_BACKUP_FILE_NAME restore /restore.sh 

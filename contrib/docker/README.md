@@ -88,7 +88,9 @@ Important! Remember that the volumes are mounted to your machine you don't have 
 ## Backup 
 
 Database backup happens automatically daily to the directory specified under HOST_BACKUP_DIR 
-CKAN's file store is assumed to be on a backed up file system and can be specified via HOST_FILE_STORE 
+CKAN's file store is assumed to be on a backed up file system and can be specified via HOST_FILE_STORE  - NOTE CKAN FILE STORE BACKUP IS NOT WELL TESTED
+
+Database schedules can be modified in the docker-compose.yml and more information on the automated backup approach can be found there.  
 
 ## Restore 
 
@@ -116,6 +118,8 @@ an example
 ```
 deployment_scripts/restore_backup.sh docker-compose.yml restore_test default_password $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/ckan/daily) $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/datastore/daily)
 ```
+
+More documentation around the restore process can be found in comments in the restore_backup.sh script
 
 # Adding licenses
 
