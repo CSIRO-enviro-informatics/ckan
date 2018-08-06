@@ -1,8 +1,6 @@
-
 *** BEFORE MOVING TO GITHUB MAKE SURE SENSITIVE DATA HAS BEEN SCRUBBED, THIS PROBABLY HAS HAPPENED BUT DOUBLE CHECK i.e .env ***
-*** CLARIFY THE BRANCH THIS WORKS OFF ***
-*** CONSIDER MAKING THIS FILE A README.md file ***
-This is the DAMBusters CKAN fork from the 2.7.2 Tag
+
+This is the DAMBusters CKAN fork from the 2.7.2 Tag AKA the Digital Asset Registry
 
 This fork:
 
@@ -10,7 +8,9 @@ Provides a functional docker-compose deployment through fixes to the CKAN contri
 Installs a selection of existing and custom plugins for DAMC data audits via modifications to the ckan-entrypoint.sh
 Provides a backup and restore mechanisms leveraging the docker-compose deployment
 
-Details of deployment are in contrib/docker/README.md
+At the moment the main branch for this fork is the damc there is no master branch in this fork 
+
+Futher details of deployment and development are in contrib/docker/README.md the documentation below is from the standard CKAN README.rst
 
 
 CKAN: The Open Source Data Portal Software
