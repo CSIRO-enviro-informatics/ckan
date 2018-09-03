@@ -115,10 +115,11 @@ To Restore the CKAN and datapusher databases
 
 WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
+NOTE - CAUTION IS WARRANTED STARTING NEW INSTANCE FOR RESTORE - You should move your desired restore backup to a different location to avoid the unlikely event that it gets overritten by a new backup from a newly instansiated instance.   
 
 General version
 ```
-deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] [full path to ckan backup] [full path to datastore backup]
+deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore]
 ```
 
 WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
