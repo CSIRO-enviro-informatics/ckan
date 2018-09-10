@@ -13,8 +13,10 @@ class DarRestoreTest(unittest.TestCase):
         self.assertLessEqual(abs(self.check_dataset_size_gap(self.prod_url, self.deploy_url)), self.max_gap_size)
 
     def test_dataset_date_gap(self):
-
-        self.assertLessEqual(abs(self.check_date_gap_to_prod(self.prod_url, self.deploy_url)), datetime.timedelta(days=self.max_gap_days))
+        date_gap = self.check_date_gap_to_prod(self.prod_url, self.deploy_url)
+        if date_gap is None:
+            self.fail("Restored instance has no data sets")
+        self.assertLessEqual(abs(date_gap), datetime.timedelta(days=self.max_gap_days))
 
     def check_dataset_size_gap(self, prod_url, deploy_url):
         path = 'api/3/action/package_list'
@@ -31,7 +33,7 @@ class DarRestoreTest(unittest.TestCase):
             return self.str_datetime(prod_latest_dataset) - self.str_datetime(deploy_latest_dataset_date)
         else:
             # deploy doesn't have dataset yet
-            return datetime.timedelta(seconds=sys.maxsize)
+            return None  
     
     def str_datetime(self, date_str):
         return datetime.datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f')
