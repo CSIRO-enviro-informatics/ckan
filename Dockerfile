@@ -22,6 +22,7 @@ RUN apt-get -q -y update && apt-get -q -y upgrade && DEBIAN_FRONTEND=noninteract
 RUN apt-get install -y python-dev libldap2-dev libsasl2-dev libssl-dev gcc
 RUN pip install python-ldap
 
+
 #CKAN spatial ext dependencies
 RUN apt-get install -y libxml2-dev libxslt1-dev libgeos-c1
 
@@ -40,6 +41,11 @@ RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/requirements.txt
 
 COPY ./dev-requirements.txt $CKAN_HOME/src/ckan/dev-requirements.txt
 RUN ckan-pip install --upgrade -r $CKAN_HOME/src/ckan/dev-requirements.txt
+
+#-------------uwsgi and paste-deploy for prod deployments----------------------------------------------------
+
+RUN pip install uwsgi 
+RUN pip install PasteDeploy 
 
 # TMP-BUGFIX https://github.com/ckan/ckan/issues/3594
 RUN ckan-pip install --upgrade urllib3
