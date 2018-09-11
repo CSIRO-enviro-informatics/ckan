@@ -7,6 +7,8 @@ services:
         - DEBUG=${DEBUG:-true}
         - DEVENV=${DEVENV:-true}
         - CKAN_REMOTE_DEBUG_IP=${CKAN_REMOTE_DEBUG_IP:-192.168.0.1}
+     ports:
+        - "${CKAN_HOST_PORT}:5000"
      command: ['ckan-paster', 'serve', '--reload', '/etc/ckan/default/ckan.ini']
 
   db:
@@ -32,5 +34,3 @@ volumes:
   ckan_config:
   ckan_src:
   ckan_entrypoint:
-
-

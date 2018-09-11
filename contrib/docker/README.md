@@ -1,6 +1,6 @@
 # Requirements
 
-Requires Environment Variables
+Environment Variables
       
 - CKAN_HOST_PORT
 - DATAPUSHER_HOST_PORT
@@ -9,30 +9,31 @@ Requires Environment Variables
 - CKAN_SITE_BASE_URL
 - CKAN_PORT
 - DATASTORE_READONLY_PASSWORD
-- CKAN_REMOTE_DEBUG_IP
+- CKAN_REMOTE_DEBUG_IP # optional required if debugging
 - SOLR_PORT_8983_TCP_ADDR
 - SOLR_PORT_8983_TCP_PORT
 - MAPBOX_ACCESS_TOKEN
-
+ 
 These can be set in an local .env file in this directory. Be cautious to specify different values in different .env if you are running multiple instances of ckan on the same machine. 
 
-More information on each variable and some example values:
+More information on each variable and some example file contents :
 
-- CKAN_HOST_PORT=8081 # CKAN host port may need to be changed if there are multiple instances running the same machine
-- DATAPUSHER_HOST_PORT=8801 # CKAN datapusher host power may need to be changed if there are multiple instances running on the same machine
-- HOST_BACKUP_DIR=[some backed up file system location] # Make sure this location is unique and you don't overwrite another instances data
-- HOST_FILE_STORE=[some backed up file system location] # Make sure this location is unique and you don't overwrite another instances data
-- CKAN_SITE_BASE_URL=http://lw-13-mel.it.csiro.au 
-- CKAN_PORT=5000 # internal port can be left at 5000
-- DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of the box but should be changed for prod deployments
-- POSTGRES_PASSWORD=default_password
-- CKAN_LDAP_PASSWORD=[the ldap password]
-- CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging
-- SOLR_PORT_8983_TCP_ADDR=solr # SOLR hostname or IP address. Use `solr` to point to the built SOLR container.
-- SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running SOLR on a different port.
-- MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins
-- DB_HOST_PORT=[host db port] # Optionally define a custom host db port
-- STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port
+CKAN_HOST_PORT=8081 # CKAN host port may need to be changed if there are multiple instances running the same machine in production mode no service will run on this port and it functions as a dummy port 
+DATAPUSHER_HOST_PORT=8801 # CKAN datapusher host power may need to be changed if there are multiple instances running on the same machine  
+HOST_BACKUP_DIR=[some backed up file system location] # Make sure this location is unique and you don't overwrite another instances data  
+HOST_FILE_STORE=[some backed up file system location] # Make sure this location is unique and you don't overwrite another instances data  
+CKAN_SITE_BASE_URL=http://lw-13-mel.it.csiro.au   
+CKAN_PORT=5000 # internal port can be left at 5000  
+DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of the box but should be changed for prod deployments  
+POSTGRES_PASSWORD=default_password  
+CKAN_LDAP_PASSWORD=[the ldap password]  
+CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging  
+SOLR_PORT_8983_TCP_ADDR=solr # SOLR hostname or IP address. Use `solr` to point to the built SOLR container.  
+SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running SOLR on a different port.  
+MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins  
+DB_HOST_PORT=[host db port] # Optionally define a custom host db port  
+STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port  
+COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml # Example of compose file setup for dev
 
 # Instructions
 
@@ -44,6 +45,28 @@ To clean installation
 ```
 $ docker-compose down -v 
 ```
+
+To use specific combinations of compose files first
+```
+$ export COMPOSE_FILE=[compose files seperated with :]
+```
+
+for dev env / debug
+```
+$ export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+```
+
+for prod 
+```
+$ export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+```
+
+To run docker-compose using a specific project name to avoid collisions with other instances on the same box use
+```
+$ export COMPOSE_NAME=[some unique name]
+```
+
+Note that in the above case you may still get port collisions and need to modify your local .env accordingly
 
 ## Deploy with project name and specified .env file
 
@@ -57,15 +80,10 @@ cd deployment_scripts
 
 This branch has remote debugging features that are turned off by default. This will provide remote debugging capabilities using for pycharm.
 
-Enable these features by setting the DEBUG environment variable and using the `docker-compose-dev.sh` helper, eg.:
-
-`export DEBUG=true`
-`./docker-compose-dev.sh [docker-compose command here]`
-
-_Or_ enable it if manually running docker-compose but passing in the path to the overlay yaml file eg.:
-
-`docker-compose -f ./contrib/docker/docker-compose.yml -f ./contrib/docker/docker-compose.dev.yml build`
-
+Enable them by setting the COMPOSE_FILE variable like 
+```
+$ export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
+```
 
 The container includes an additional ckan debug plugin.
 
@@ -127,14 +145,14 @@ NOTE - CAUTION IS WARRANTED STARTING NEW INSTANCE FOR RESTORE - You should move 
 
 General version
 ```
-deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore]
+deployment_scripts/restore_backup.sh [database password] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore]
 ```
 
 WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
 Restoring the latest backup
 ```
-deployment_scripts/restore_backup.sh docker-compose.yml [docker project name] [database password] $(deployment_scripts/find_latest_backup.sh [path to ckan daily backups directory]) $(deployment_scripts/find_latest_backup.sh [path to datastore daily backups directory])
+deployment_scripts/restore_backup.sh [database password] $(deployment_scripts/find_latest_backup.sh [path to ckan daily backups directory]) $(deployment_scripts/find_latest_backup.sh [path to datastore daily backups directory])
 ```
 
 WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
@@ -142,7 +160,7 @@ WARNING - THIS WILL DELETE YOUR CURRENT DATABASE
 an example 
 
 ```
-deployment_scripts/restore_backup.sh docker-compose.yml restore_test default_password $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/ckan/daily) $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/datastore/daily)
+deployment_scripts/restore_backup.sh default_password $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/ckan/daily) $(deployment_scripts/find_latest_backup.sh /OSM/MEL/LW_OZNOME/apps/damc-ckan-backups/prod/postgres/datastore/daily)
 ```
 
 If has error during restore like: `ERROR: Cannot create container for service ckan: Conflict. The container name "/xxxx" is already in use by container "e8d481d2d5dcc73...`, remove the ckan docker first, and try restore again. 

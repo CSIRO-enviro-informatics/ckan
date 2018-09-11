@@ -2,8 +2,8 @@ version: "3.2"
 services:
     ckan:
         command: ['uwsgi', '-H', '$$(CKAN_HOME)',  '--ini-paste', '/etc/ckan/default/ckan.ini']
-        environment:
-            - PROD=${DEBUG:-true}
+        environment: 
+             - PROD=true
 
     nginx:
         image: nginx:1.13-alpine
@@ -12,4 +12,4 @@ services:
         depends_on:
             - ckan 
         ports:
-            - 8083:80
+            - "${CKAN_HOST_PORT}:80"
