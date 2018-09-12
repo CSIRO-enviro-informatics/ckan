@@ -26,8 +26,6 @@ services:
         - type: volume
           source: ckan_entrypoint
           target: /entrypoint
-     ports:
-        - "${CKAN_HOST_PORT}:5000"
      environment:
         - DEBUG=${DEBUG:-false}
         - DB_PORT_5432_TCP_ADDR=db

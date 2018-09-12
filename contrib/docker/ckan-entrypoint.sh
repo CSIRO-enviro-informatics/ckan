@@ -25,6 +25,7 @@ set_environment () {
   export CKAN_STORAGE_PATH=${CKAN_STORAGE_PATH}
   export CKAN_SITE_URL=${CKAN_SITE_URL}
   export CKAN_DEFAULT_ADMIN=${CKAN_SITE_URL}
+  export CKAN_HOME=${CKAN_HOME}
   export CKAN_LDAP_PASSWORD=${CKAN_LDAP_PASSWORD}
   export CKAN_DATASTORE_WRITE_URL=${CKAN_DATASTORE_WRITE_URL}
   export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
@@ -114,6 +115,14 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "sqlalchemy.url = $(link_postgres_url)"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
+
+  if [ "$PROD" == "1" ] || [ "$PROD" == "true" ]; then
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "socket = 0.0.0.0:3031" 
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "master = true" 
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "processes = 4" 
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "virtualenv = ${CKAN_HOME}"
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "threads = 2"
+  fi
 }
 
 update_config () {
