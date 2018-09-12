@@ -65,7 +65,12 @@ To run docker-compose using a specific project name to avoid collisions with oth
 $ export COMPOSE_PROJECT_NAME=[some unique name]
 ```
 
-Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+> Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+> Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
+
+    ```
+    sudo usermod -a -G docker $USER
+    ```
 
 ## Deploy with project name and specified .env file
 
