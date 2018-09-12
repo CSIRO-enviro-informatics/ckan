@@ -33,7 +33,6 @@ SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running 
 MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins  
 DB_HOST_PORT=[host db port] # Optionally define a custom host db port  
 STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port  
-COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml # Example of compose file setup for dev
 
 # Instructions
 
@@ -63,7 +62,7 @@ $ export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
 
 To run docker-compose using a specific project name to avoid collisions with other instances on the same box use
 ```
-$ export COMPOSE_NAME=[some unique name]
+$ export COMPOSE_PROJECT_NAME=[some unique name]
 ```
 
 Note that in the above case you may still get port collisions and need to modify your local .env accordingly
