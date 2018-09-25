@@ -76,8 +76,7 @@ $ export COMPOSE_PROJECT_NAME=[some unique name]
 
 ```bash
 cd deployment_scripts
-# update_deploy_all.sh project  .env-path 
-./update_deploy_all.sh project-name ../.env skipDirCheck
+./update_deploy_all.sh ../.env skipDirCheck
 ```
 
 # Debugging  
