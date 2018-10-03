@@ -77,6 +77,10 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.geoview.ol_viewer.formats = kml geojson"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.views.default_views = image_view webpage_view recline_grid_view recline_map_view geo_view pdf_view geojson_view"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.activity_streams_email_notifications = True"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.mail_from = oznomehelp@csiro.au"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.user = oznomehelp@csiro.au"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.server = smtp-relay.csiro.au"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.formats = csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.url = ${CKAN_DATAPUSHER_URL}"
@@ -87,7 +91,7 @@ write_config () {
       DEVPLUGIN=
   fi
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = $DEVPLUGIN stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = $DEVPLUGIN stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in restricted"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.anon_create_dataset = false"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.auth.create_unowned_dataset = true"
@@ -122,6 +126,7 @@ write_config () {
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "processes = 4" 
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "virtualenv = ${CKAN_HOME}"
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "threads = 2"
+      ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cache_expires  = 3600"
   fi
 }
 

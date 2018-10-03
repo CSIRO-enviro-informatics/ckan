@@ -26,7 +26,7 @@ ordereddict==1.1
 Pairtree==0.7.1-T
 passlib==1.6.5
 paste==1.7.5.1
-PasteDeploy==1.5.2        # via pastescript, pylons
+pastedeploy==1.5.2        # via pastescript, pylons
 PasteScript==2.0.2        # via pylons
 pbr==1.10.0               # via sqlalchemy-migrate
 polib==1.0.7
@@ -60,7 +60,7 @@ WebOb==1.0.8              # via fanstatic, pylons, repoze.who, repoze.who-friend
 WebTest==1.4.3            # via pylons
 Werkzeug==0.11.10         # via flask
 zope.interface==4.3.2
-
+ckanext-restricted #ckan restricted plugin
 # The following packages are commented out because they are
 # considered to be unsafe in a requirements file:
 # setuptools                # via repoze.who, zope.interface
