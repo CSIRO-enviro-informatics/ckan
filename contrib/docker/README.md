@@ -91,20 +91,32 @@ $ export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
 The container includes an additional ckan debug plugin.
 
 This plugin will run a pycharm debug client inside CKAN and attempt to connect to a pycharm instance running a debug server at CKAN_REMOTE_DEBUG_IP on port 6666. You should 
-set CKAN_REMOTE_DEBUG_IP via a .env file to your full computer name e.g `CKAN_REMOTE_DEBUG_IP=steakpie-cl.nexus.csiro.au`. Note that if you are using a vm you should make sure that you are port forwarding 6666 to your host port 6666.  
+set CKAN_REMOTE_DEBUG_IP via a .env file to your full computer name e.g `CKAN_REMOTE_DEBUG_IP=steakpie-cl.nexus.csiro.au`. 
+
+Note if you are using a vm (e.g. VirtualBox):
+a) you should make sure that you are port forwarding 6666 to your host port 6666.  
+b) In virtualbox, ensure the CKAN_REMOTE_DEBUG_IP is set to 10.0.2.2
+
+
 
 ## Mounting Anonymous Volumes For Live Code Editing 
 
-Additionally the dev-env docker-compose file adds new anonymous volumes for the ckan source code and ckan config file and ckan entrypoint. These anonymous volumes are persistent as long as they aren't explicitly deleted with something like `docker-compose down -v`. An additional script, `mount.sh` will mount these directories locally to a directory at the root of the ckan deployment called `local_code`. You'll need sshfs installed on your box try `sudo apt-get install -y sshfs`. Funning this might generate some errors if directories do and don't exist but ultimately you should be prompted for passwords for ssh mounts. As this is just a local sshfs server the password is 'root'. 
+Additionally the dev-env docker-compose file adds new anonymous volumes for the ckan source code and ckan config file and ckan entrypoint. These anonymous volumes are persistent as long as they aren't explicitly deleted with something like `docker-compose down -v`. 
 
-If things mounted correctly then from the contrib/docker directory you should be able to see directories at `../../local_code`. These directories are linked to the "live" directories inside the ckan container. Editing these directories in the host will be reflected in the container and vice versa. Note that this approach is used preferentially to regular docker bind mounts because it allows the Dockerfiles to fully configure the contents of these directories rather than requiring you to preconfigure the contents locally on your host prior to running the containers. 
+An additional script, `mount.sh` will mount these directories locally to a directory at the root of the ckan deployment called `local_code`. 
+You'll need sshfs installed on your box try `sudo apt-get install -y sshfs`. 
+Running this might generate some errors if directories do and don't exist but ultimately you should be prompted for passwords for ssh mounts. 
+As this is just a local sshfs server the password is 'root'. Type this at each prompt (there are currently 3 prompts).
+
+If things mount correctly then from the contrib/docker directory you should be able to see directories at `../../local_code`. These directories are linked to the "live" directories inside the ckan container. Editing these directories in the host will be reflected in the container and vice versa. Note that this approach is used preferentially to regular docker bind mounts because it allows the Dockerfiles to fully configure the contents of these directories rather than requiring you to preconfigure the contents locally on your host prior to running the containers. 
 
 ## Getting Debug Running
 
 1. If you are running the containers shutdown the ckan container with `./docker-compose-dev.sh stop ckan`.  
 2. Start up pycharm and open the folder local code.  
 3. If you are debugging for the first time this will create a hidden folder called .idea under local_code to store your configurations.  
-4. If it doesn't exist create a new `Python Remote Debug` configuration. Name this something like `damc-ckan-dev`.  
+4. If it doesn't exist create a new `Python Remote Debug` configuration. Do this via "Run" > "Debug" > "Edit configuration...". Click the "+" Button. Select "Python Remote Debug".
+   Name this something like `damc-ckan-dev`.  
 5. Ignore the "update your script" instructions this will have happened automatically as part of the docker-compose process. Leave the localhost name set to localhost and the port set to 6666. Important! Change the default path mapping to the following or your local equivalent "[my local base directory]/damc-ckan/local_code/ckan_src=/usr/lib/ckan/default/src" this is subtle different to the default. 
 6. Apply the configuration.   
 7. Select the configuration from the debug menu to make it active and start debugging.   
