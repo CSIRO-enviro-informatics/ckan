@@ -77,7 +77,9 @@ write_config () {
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckanext.geoview.ol_viewer.formats = kml geojson"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.views.default_views = image_view webpage_view recline_grid_view recline_map_view geo_view pdf_view geojson_view"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.activity_streams_email_notifications = True"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.activity_streams_email_notifications = False"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "email_to = oznomehelp@example.com"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "error_email_from = oznomehelp@csiro.au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.mail_from = oznomehelp@csiro.au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.user = oznomehelp@csiro.au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.server = smtp-relay.csiro.au"
