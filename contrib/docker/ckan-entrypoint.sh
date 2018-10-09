@@ -91,7 +91,7 @@ write_config () {
       DEVPLUGIN=
   fi
 
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = $DEVPLUGIN stats text_view image_view ldap datastore datapusher digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in restricted datarequests"
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.plugins = $DEVPLUGIN stats text_view image_view ldap datastore digitalassetfields csiro_hub_theme hierarchy_display hierarchy_form spatial_metadata spatial_query resource_proxy geo_view recline_grid_view recline_map_view recline_graph_view user_ext user_opt_in restricted datarequests"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datarequests.comments = true"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datarequests.show_datarequests_badge = false"
