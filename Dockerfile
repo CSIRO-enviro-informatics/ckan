@@ -75,6 +75,11 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 
 RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-geoview
 
+#restricted plugin
+RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-restricted
+
+#data requests
+RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-datarequests
 
 # Setup ckanext-org ckan Plugin
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e "git+https://github.com/datagovuk/ckanext-hierarchy.git#egg=ckanext-hierarchy"
