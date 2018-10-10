@@ -35,6 +35,11 @@ DB_HOST_PORT=[host db port] # Optionally define a custom host db port
 STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port  
 
 # Instructions
+> Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
+
+```
+$ sudo usermod -a -G docker $USER
+```
 
 To use specific combinations of compose files first
 ```
@@ -56,6 +61,7 @@ To run docker-compose using a specific project name to avoid collisions with oth
 $ export COMPOSE_PROJECT_NAME=[some unique name]
 ```
 
+To build (if there is no existing image) images and start them running, note the -d is used to silence the console messages.
 ```
 docker-compose up -d
 ```
@@ -65,11 +71,7 @@ To clean installation
 $ docker-compose down -v 
 ```
 > Note that in the above case you may still get port collisions and need to modify your local .env accordingly
-> Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
-    ```
-    sudo usermod -a -G docker $USER
-    ```
 
 ## Deploy with project name and specified .env file
 
