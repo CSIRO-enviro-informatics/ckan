@@ -35,8 +35,8 @@ DB_HOST_PORT=[host db port] # Optionally define a custom host db port
 STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port  
 
 # Instructions
-> Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
+Do the following so that you are added to the docker group
 ```
 $ sudo usermod -a -G docker $USER
 ```
@@ -65,12 +65,14 @@ To build (if there is no existing image) images and start them running, note the
 ```
 docker-compose up -d
 ```
+> Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+> Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
 To clean installation
 ```
 $ docker-compose down -v 
 ```
-> Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+
 
 
 ## Deploy with project name and specified .env file
