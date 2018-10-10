@@ -36,15 +36,6 @@ STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host c
 
 # Instructions
 
-```
-docker-compose up -d
-```
-
-To clean installation
-```
-$ docker-compose down -v 
-```
-
 To use specific combinations of compose files first
 ```
 $ export COMPOSE_FILE=[compose files seperated with :]
@@ -65,6 +56,14 @@ To run docker-compose using a specific project name to avoid collisions with oth
 $ export COMPOSE_PROJECT_NAME=[some unique name]
 ```
 
+```
+docker-compose up -d
+```
+
+To clean installation
+```
+$ docker-compose down -v 
+```
 > Note that in the above case you may still get port collisions and need to modify your local .env accordingly
 > Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
