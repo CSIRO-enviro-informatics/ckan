@@ -66,6 +66,7 @@ To build (if there is no existing image) images and start them running, note the
 docker-compose up -d
 ```
 > Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+
 > Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
 To clean installation
