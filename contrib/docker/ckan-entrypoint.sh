@@ -50,6 +50,7 @@ write_config () {
       "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
       "ckan.site_url = ${CKAN_SITE_URL}"
 
+  ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = false"
   if [ "$DEBUG" == "1" ] || [ "$DEBUG" == "true" ]; then
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s DEFAULT "debug = true"
   fi
@@ -81,7 +82,7 @@ write_config () {
   ckan-paster --plugin=ckan config-tool "$CONFIG" "email_to = oznomehelp@example.com"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "error_email_from = oznomehelp@csiro.au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.mail_from = oznomehelp@csiro.au"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.user = oznomehelp@csiro.au"
+#  ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.user = oznomehelp@csiro.au"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "smtp.server = smtp-relay.csiro.au"
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datapusher.formats = csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
