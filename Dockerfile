@@ -76,7 +76,9 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-geoview
 
 #restricted plugin
-RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-restricted
+#RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-restricted
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-restricted.git#egg=ckanext-restricted
+
 
 #data requests
 RUN . /usr/lib/ckan/default/bin/activate && pip install ckanext-datarequests

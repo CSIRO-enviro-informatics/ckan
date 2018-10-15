@@ -38,13 +38,9 @@ BACKUP_FREQUENCY=@daily # defaults to @daily if not present specified according 
 
 # Instructions
 
+Do the following so that you are added to the docker group
 ```
-docker-compose up -d
-```
-
-To clean installation
-```
-$ docker-compose down -v 
+$ sudo usermod -a -G docker $USER
 ```
 
 To use specific combinations of compose files first
@@ -67,12 +63,20 @@ To run docker-compose using a specific project name to avoid collisions with oth
 $ export COMPOSE_PROJECT_NAME=[some unique name]
 ```
 
+To build (if there is no existing image) images and start them running, note the -d is used to silence the console messages.
+```
+docker-compose up -d
+```
 > Note that in the above case you may still get port collisions and need to modify your local .env accordingly
+
 > Note that in the above case, the environment variables only valid at current sh session, please add your linux login name to docker group, or else, use `sudo docker-compose ...` command will cause the failure of reading these variables. 
 
-    ```
-    sudo usermod -a -G docker $USER
-    ```
+To clean installation
+```
+$ docker-compose down -v 
+```
+
+
 
 ## Deploy with project name and specified .env file
 
@@ -114,7 +118,7 @@ If things mount correctly then from the contrib/docker directory you should be a
 
 ## Getting Debug Running
 
-1. If you are running the containers shutdown the ckan container with `./docker-compose-dev.sh stop ckan`.  
+1. If you are running the containers shutdown the ckan container with `docker-compose stop ckan`.  
 2. Start up pycharm and open the folder local code.  
 3. If you are debugging for the first time this will create a hidden folder called .idea under local_code to store your configurations.  
 4. If it doesn't exist create a new `Python Remote Debug` configuration. Do this via "Run" > "Debug" > "Edit configuration...". Click the "+" Button. Select "Python Remote Debug".
@@ -123,7 +127,7 @@ If things mount correctly then from the contrib/docker directory you should be a
 6. Apply the configuration.   
 7. Select the configuration from the debug menu to make it active and start debugging.   
 8. You should see a message indicating that the debug server is running and waiting for a connection.  
-9. Start the ckan container with `./docker-compose-dev.sh up -d ckan` or everything (if it isn't already started) with `./docker-compose-dev.sh up -d`, if starting everything for the first time or starting after having deleted your volumes you will need to run `mount.sh` after the containers have started. 
+9. Start the ckan container with `docker-compose up -d ckan` or everything (if it isn't already started) with `docker-compose up -d`, if starting everything for the first time or starting after having deleted your volumes you will need to run `mount.sh` after the containers have started. 
 
 After a short time you should see a message in the pycharm saying something like:
 

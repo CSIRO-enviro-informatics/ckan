@@ -1,0 +1,11 @@
+version: "3.2"
+services:
+  ckan:
+     ports:
+        - "${CKAN_HOST_PORT}:5000"
+     command: ['ckan-paster', 'serve', '--reload', '/etc/ckan/default/ckan.ini']
+
+  db:
+    ports:
+        - ${DB_HOST_PORT:-5432}:5432
+
