@@ -13,6 +13,7 @@ Environment Variables
 - SOLR_PORT_8983_TCP_ADDR
 - SOLR_PORT_8983_TCP_PORT
 - MAPBOX_ACCESS_TOKEN
+- BACKUP_FREQUENCY # optional backup frequency defaults to @daily 
  
 These can be set in an local .env file in this directory. Be cautious to specify different values in different .env if you are running multiple instances of ckan on the same machine. 
 
@@ -33,6 +34,7 @@ SOLR_PORT_8983_TCP_PORT=8983 # SOLR Port number. Change this if you are running 
 MAPBOX_ACCESS_TOKEN=[mapbox api access token] # Place your mapbox token in here in order to activate Mapbox API features that are required by CKAN spatial plugins  
 DB_HOST_PORT=[host db port] # Optionally define a custom host db port  
 STATIC_CONTENT_HOST_PORT=[host static content port] # Optionally define a host custom static content port  
+BACKUP_FREQUENCY=@daily # defaults to @daily if not present specified according to documentation at http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules 
 
 # Instructions
 
