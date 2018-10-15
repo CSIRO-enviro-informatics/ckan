@@ -154,7 +154,19 @@ Important! Remember that the volumes are mounted to your machine you don't have 
 Database backup happens automatically daily to the directory specified under HOST_BACKUP_DIR 
 CKAN's file store is assumed to be on a backed up file system and can be specified via HOST_FILE_STORE  - NOTE CKAN FILE STORE BACKUP IS NOT WELL TESTED
 
-Database schedules can be modified in the docker-compose.yml and more information on the automated backup approach can be found there.  
+Database schedules can be modified via the .env file or docker-compose.yml and more information on the automated backup approach can be found there.  
+
+### One off backups
+
+Running  
+
+`docker-compose run ckan_postgres_backup /backup.sh`
+
+and 
+
+`docker-compose run datastore_postgres_backup /backup.sh` 
+
+Will run a manually on demand one off backup. This could, and in some cases, should be run prior to an instance upgrade
 
 ## Restore 
 
