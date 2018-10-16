@@ -47,11 +47,13 @@ services:
         - MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
         - DB_ENV_POSTGRES_USER=ckan
         - DB_ENV_POSTGRES_DB=ckan
+     restart: always 
 
   datapusher:
      build: ./datapusher
      ports:
         - "${DATAPUSHER_HOST_PORT}:8800"
+     restart: always 
 
   db:
     build: postgresql/
@@ -60,12 +62,15 @@ services:
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
         - ${DB_HOST_PORT:-5432}:5432
+    restart: always 
   
   staticcontent:
     build: static_content/
     ports:
             - ${STATIC_CONTENT_HOST_PORT:-8889}:80
+    restart: always 
 
+  # Do not add a restore policy to the restore container it should not be run automatically and is here to define the ability to manually run it
   restore:
     build: restore/
     links:
@@ -97,6 +102,7 @@ services:
         - BACKUP_KEEP_DAYS=7
         - BACKUP_KEEP_WEEKS=4
         - BACKUP_KEEP_MONTHS=6
+    restart: always 
 
   datastore_postgres_backup:
     build: postgres_backups/
@@ -114,12 +120,15 @@ services:
         - BACKUP_KEEP_DAYS=7
         - BACKUP_KEEP_WEEKS=4
         - BACKUP_KEEP_MONTHS=6
+    restart: always
 
   solr:
     build: solr/
+    restart: always
 
   redis:
     image: redis:latest
+    restart: always
 
 volumes:
   ckan_config:

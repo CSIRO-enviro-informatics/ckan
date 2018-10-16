@@ -29,6 +29,7 @@ services:
         - type: volume
           source: ckan_entrypoint
           target: /ckan_entrypoint
+    restart: always
 
 volumes:
   ckan_config:
