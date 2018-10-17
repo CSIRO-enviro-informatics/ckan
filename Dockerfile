@@ -101,6 +101,10 @@ RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default
 RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-user_opt_in.git#egg=ckanext-user_opt_in
 RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-user-opt-in/requirements.txt
 
+# Setup EI's mod on dgu-organisation 
+RUN . /usr/lib/ckan/default/bin/activate && pip install -e git+https://github.com/CSIRO-enviro-informatics/ckanext-dgu_orgs.git#egg=ckanext-dgu_orgs
+#RUN . /usr/lib/ckan/default/bin/activate && pip install -r /usr/lib/ckan/default/src/ckanext-dgu_orgs/requirements.txt
+
 RUN apt-get install -y postgresql-client
 
 # Other ckan views
