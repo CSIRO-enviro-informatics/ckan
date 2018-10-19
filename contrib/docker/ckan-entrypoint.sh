@@ -27,6 +27,7 @@ set_environment () {
   export CKAN_DEFAULT_ADMIN=${CKAN_SITE_URL}
   export CKAN_HOME=${CKAN_HOME}
   export CKAN_LDAP_PASSWORD=${CKAN_LDAP_PASSWORD}
+  export CKAN_ADMIN_PASSWORD=${CKAN_ADMIN_PASSWORD}
   export CKAN_DATASTORE_WRITE_URL=${CKAN_DATASTORE_WRITE_URL}
   export CKAN_DATASTORE_READ_URL=${CKAN_DATASTORE_READ_URL}
   export MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
@@ -256,7 +257,7 @@ if [ -z "$BYPASS_DB_INIT" ]; then
 	unset PGPASSWORD
 	set -e
 fi
-ckan-paster --plugin=ckan user add admin password=admin email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
+ckan-paster --plugin=ckan user add admin password=${CKAN_ADMIN_PASSWORD} email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 create_org_and_user_membership
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
 exec "$@"
