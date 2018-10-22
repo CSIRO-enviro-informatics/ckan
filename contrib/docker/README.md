@@ -175,7 +175,7 @@ To Restore the CKAN and datapusher databases
 
 > WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
-> Ckan admin password will be rewritten by restore process, modify admin password at http://host_url/user/edit/admin  after restore
+> Ckan admin password will be rewritten by restore process, modify admin password at http://host_url/user/edit/admin  after restore complete.
 
 > NOTE - CAUTION IS WARRANTED STARTING NEW INSTANCE FOR RESTORE - You should move your desired restore backup to a different location to avoid the unlikely event that it gets overritten by a new backup from a newly instansiated instance.   
 
