@@ -27,6 +27,7 @@ CKAN_SITE_BASE_URL=http://lw-13-mel.it.csiro.au
 CKAN_PORT=5000 # internal port can be left at 5000  
 DATASTORE_READONLY_PASSWORD=default_password # these passwords will work out of the box but should be changed for prod deployments  
 POSTGRES_PASSWORD=default_password  
+CKAN_ADMIN_PASSWORD=[ckan admin user password]
 CKAN_LDAP_PASSWORD=[the ldap password]  
 CKAN_REMOTE_DEBUG_IP=0.0.0.0 # remote ip of pycharm debug server running on port 6666 for debugging  
 SOLR_PORT_8983_TCP_ADDR=solr # SOLR hostname or IP address. Use `solr` to point to the built SOLR container.  
@@ -160,11 +161,11 @@ Database schedules can be modified via the .env file or docker-compose.yml and m
 
 Running  
 
-`docker-compose run ckan_postgres_backup /backup.sh`
+`docker-compose exec ckan_postgres_backup /backup.sh`
 
 and 
 
-`docker-compose run datastore_postgres_backup /backup.sh` 
+`docker-compose exec datastore_postgres_backup /backup.sh` 
 
 Will run a manually on demand one off backup. This could, and in some cases, should be run prior to an instance upgrade
 
@@ -172,23 +173,25 @@ Will run a manually on demand one off backup. This could, and in some cases, sho
 
 To Restore the CKAN and datapusher databases 
 
-WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+> WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
-NOTE - CAUTION IS WARRANTED STARTING NEW INSTANCE FOR RESTORE - You should move your desired restore backup to a different location to avoid the unlikely event that it gets overritten by a new backup from a newly instansiated instance.   
+> Ckan admin password will be rewritten by restore process, modify admin password at http://host_url/user/edit/admin  after restore
+
+> NOTE - CAUTION IS WARRANTED STARTING NEW INSTANCE FOR RESTORE - You should move your desired restore backup to a different location to avoid the unlikely event that it gets overritten by a new backup from a newly instansiated instance.   
 
 General version
 ```
 deployment_scripts/restore_backup.sh [database password] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore] [filename of source ckan backup to use must be in HOST_BACKUP_DIR/postgres/datastore]
 ```
 
-WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+> WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
 Restoring the latest backup
 ```
 deployment_scripts/restore_backup.sh [database password] $(deployment_scripts/find_latest_backup.sh [path to ckan daily backups directory]) $(deployment_scripts/find_latest_backup.sh [path to datastore daily backups directory])
 ```
 
-WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
+> WARNING - THIS WILL DELETE YOUR CURRENT DATABASE 
 
 an example 
 
@@ -200,6 +203,7 @@ If has error during restore like: `ERROR: Cannot create container for service ck
 
 More documentation around the restore process can be found in comments in the restore_backup.sh script
 
+## Note after restore
 
 # Adding licenses
 
