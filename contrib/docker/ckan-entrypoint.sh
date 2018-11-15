@@ -250,11 +250,11 @@ VALUES ('e03c5eab-60db-4524-9245-61efb5045390', (now() at time zone 'utc'), 'adm
 ON CONFLICT DO NOTHING;
 
 INSERT INTO ckan.public.group (id, name, title, description, created, state, revision_id, type, is_organization)
-VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'Local Assets', 'Local L&W created assets', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', 'organization', FALSE)
+VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'Local Assets', 'Local L&W created assets', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', 'group', FALSE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO ckan.public.group_revision (id, name, title, description, created, state, revision_id, continuity_id, revision_timestamp, type, is_organization)
-VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'Local Assets', 'Local L&W created assets', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', '6d9337de-8140-4911-9a3f-8c02cdc166fa', (now() at time zone 'utc'), 'organization', FALSE)
+VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'Local Assets', 'Local L&W created assets', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', '6d9337de-8140-4911-9a3f-8c02cdc166fa', (now() at time zone 'utc'), 'group', FALSE)
 ON CONFLICT DO NOTHING;
 
 EOF
