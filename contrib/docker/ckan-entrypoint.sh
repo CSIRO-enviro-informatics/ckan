@@ -133,7 +133,7 @@ write_config () {
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "processes = 6" 
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "virtualenv = ${CKAN_HOME}"
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "threads = 2"
-      ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cache_expires  = 3600"
+      #ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.cache_expires  = 3600"
   fi
 }
 
