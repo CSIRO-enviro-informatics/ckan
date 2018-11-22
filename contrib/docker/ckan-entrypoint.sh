@@ -131,6 +131,7 @@ write_config () {
 
   if [ "$PROD" == "1" ] || [ "$PROD" == "true" ]; then
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "socket = 0.0.0.0:3031" 
+      ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "lazy-apps = true" 
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "master = true" 
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "processes = 6" 
       ckan-paster --plugin=ckan config-tool "$CONFIG" -s "uwsgi" "virtualenv = ${CKAN_HOME}"
