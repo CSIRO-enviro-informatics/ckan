@@ -241,6 +241,27 @@ EOF
   set -e
 }
 
+create_local_org () {
+  set +e
+  export PGPASSWORD=$DB_ENV_POSTGRES_PASSWORD
+  cat <<EOF | psql -h $DB_PORT_5432_TCP_ADDR -p $DB_PORT_5432_TCP_PORT -U $DB_ENV_POSTGRES_USER --set ON_ERROR_STOP=1 || true
+INSERT INTO ckan.public.revision (id, timestamp, author, message, state)
+VALUES ('e03c5eab-60db-4524-9245-61efb5045390', (now() at time zone 'utc'), 'admin', 'Create local group and add admin user as member.', 'active')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO ckan.public.group (id, name, title, description, created, state, revision_id, type, is_organization)
+VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'User Created', 'Assets created locally in the digital asset register i.e excludes everything imported from other systems', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', 'group', FALSE)
+ON CONFLICT DO NOTHING;
+
+INSERT INTO ckan.public.group_revision (id, name, title, description, created, state, revision_id, continuity_id, revision_timestamp, type, is_organization)
+VALUES ('6d9337de-8140-4911-9a3f-8c02cdc166fa', 'local', 'User Created', 'Assets created locally in the digital asset register i.e excludes everything imported from other systems', (now() at time zone 'utc'), 'active', 'e03c5eab-60db-4524-9245-61efb5045390', '6d9337de-8140-4911-9a3f-8c02cdc166fa', (now() at time zone 'utc'), 'group', FALSE)
+ON CONFLICT DO NOTHING;
+
+EOF
+  unset PGPASSWORD
+  set -e
+}
+
 #. ./wait-for-it.sh -t 0 -h http://solr -p 8983 -- echo "solr is up"
 
 ./wait-for-it.sh -t 0 -h solr -p 8983 -- echo "solr is up"
@@ -259,5 +280,6 @@ if [ -z "$BYPASS_DB_INIT" ]; then
 fi
 ckan-paster --plugin=ckan user add admin password=${CKAN_ADMIN_PASSWORD} email=OznomeHelp@csiro.au -c "${CKAN_CONFIG}/ckan.ini" || true
 create_org_and_user_membership
+create_local_org
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
 exec "$@"
