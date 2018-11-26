@@ -124,8 +124,6 @@ write_config () {
   fi
 
   ckan-paster --plugin=ckan config-tool "$CONFIG" "sqlalchemy.url = $(link_postgres_url)"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.sqlalchemy.pool_size=10"
-  ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.sqlalchemy.max_overflow=20"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.write_url = $(link_datastore_postgres_url)"
   ckan-paster --plugin=ckan config-tool "$CONFIG" "ckan.datastore.read_url = $(link_datastore_postgres_url)"
 
