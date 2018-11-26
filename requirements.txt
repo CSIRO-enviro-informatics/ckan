@@ -61,6 +61,7 @@ WebTest==1.4.3            # via pylons
 Werkzeug==0.11.10         # via flask
 zope.interface==4.3.2
 ckanext-restricted #ckan restricted plugin
+ckanapi==4.1
 # The following packages are commented out because they are
 # considered to be unsafe in a requirements file:
 # setuptools                # via repoze.who, zope.interface
