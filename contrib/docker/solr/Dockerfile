@@ -9,8 +9,8 @@ RUN mkdir -p /opt/solr/server/solr/$SOLR_CORE/conf
 RUN mkdir -p /opt/solr/server/solr/$SOLR_CORE/data
 
 # Adding Files
-ADD ./contrib/docker/solr/solrconfig.xml \
-./ckan/config/solr/schema.xml \
+ADD ./solrconfig.xml \
+./schema.xml \
 https://raw.githubusercontent.com/apache/lucene-solr/releases/lucene-solr/6.6.5/solr/server/solr/configsets/basic_configs/conf/currency.xml \
 https://raw.githubusercontent.com/apache/lucene-solr/releases/lucene-solr/6.6.5/solr/server/solr/configsets/basic_configs/conf/synonyms.txt \
 https://raw.githubusercontent.com/apache/lucene-solr/releases/lucene-solr/6.6.5/solr/server/solr/configsets/basic_configs/conf/stopwords.txt \
@@ -25,9 +25,6 @@ RUN echo name=$SOLR_CORE > /opt/solr/server/solr/$SOLR_CORE/core.properties
 
 USER root
 RUN chown -R $SOLR_USER:$SOLR_USER /opt/solr/server/solr/$SOLR_CORE
-
-# User
-USER $SOLR_USER:$SOLR_USER
 
 # Add Tini
 ENV TINI_VERSION v0.17.0
