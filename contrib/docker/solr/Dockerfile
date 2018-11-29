@@ -28,3 +28,13 @@ RUN chown -R $SOLR_USER:$SOLR_USER /opt/solr/server/solr/$SOLR_CORE
 
 # User
 USER $SOLR_USER:$SOLR_USER
+
+# Add Tini
+ENV TINI_VERSION v0.17.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
+USER $SOLR_USER:$SOLR_USER
+ENTRYPOINT ["/tini", "--", "docker-entrypoint.sh"]
+CMD ["solr-foreground"]
+
