@@ -5,6 +5,8 @@
 '''
 import __builtin__ as builtins
 
+import six
+
 import ckan
 import ckan.logic as logic
 import ckan.model as model
@@ -70,8 +72,10 @@ class TestUserInvite(object):
     @mock.patch('ckan.lib.mailer.send_invite')
     @mock.patch('random.SystemRandom')
     def test_works_even_if_username_already_exists(self, rand, _):
-        rand.return_value.random.side_effect = [1000, 1000, 1000, 2000,
-                                                3000, 4000, 5000]
+        # usernames
+        rand.return_value.random.side_effect = [1000, 1000, 2000, 3000]
+        # passwords (need to set something, otherwise choice will break)
+        rand.return_value.choice.side_effect = 'TestPassword1' * 3
 
         for _ in range(3):
             invited_user = self._invite_user_to_group(email='same@email.com')
@@ -547,7 +551,10 @@ class TestResourceCreate(object):
             'name': 'A nice resource',
             'upload': test_resource
         }
-        result = helpers.call_action('resource_create', context, **params)
+
+        # Mock url_for as using a test request context interferes with the FS mocking
+        with mock.patch('ckan.lib.helpers.url_for'):
+            result = helpers.call_action('resource_create', context, **params)
 
         mimetype = result.pop('mimetype')
 
@@ -583,7 +590,10 @@ class TestResourceCreate(object):
             'name': 'A nice resource',
             'upload': test_resource
         }
-        result = helpers.call_action('resource_create', context, **params)
+
+        # Mock url_for as using a test request context interferes with the FS mocking
+        with mock.patch('ckan.lib.helpers.url_for'):
+            result = helpers.call_action('resource_create', context, **params)
 
         mimetype = result.pop('mimetype')
 
@@ -615,7 +625,10 @@ class TestResourceCreate(object):
             'name': 'A nice resource',
             'upload': test_resource
         }
-        result = helpers.call_action('resource_create', context, **params)
+
+        # Mock url_for as using a test request context interferes with the FS mocking
+        with mock.patch('ckan.lib.helpers.url_for'):
+            result = helpers.call_action('resource_create', context, **params)
 
         size = result.pop('size')
 
@@ -777,6 +790,21 @@ class TestDatasetCreate(helpers.FunctionalTestBase):
             name='test-dataset',
         )
         assert_equals(dataset['id'], '1234')
+
+    def test_context_is_not_polluted(self):
+        user = factories.Sysadmin()
+        context = {
+            'user': user['name'],
+            'ignore_auth': False,
+        }
+        helpers.call_action(
+            'package_create',
+            context=context,
+            id='1234',
+            name='test-dataset',
+        )
+        assert('id' not in context)
+        assert('package' not in context)
 
     def test_id_cant_already_exist(self):
         dataset = factories.Dataset()
@@ -955,6 +983,15 @@ class TestDatasetCreate(helpers.FunctionalTestBase):
         tag_names = sorted([tag_dict['name']
                             for tag_dict in dataset['tags']])
         assert_equals(tag_names, ['russian', 'tolstoy'])
+
+    def test_return_id_only(self):
+        dataset = helpers.call_action(
+            'package_create',
+            name='test-id',
+            context={'return_id_only': True},
+        )
+
+        assert isinstance(dataset, six.string_types)
 
 
 class TestGroupCreate(helpers.FunctionalTestBase):

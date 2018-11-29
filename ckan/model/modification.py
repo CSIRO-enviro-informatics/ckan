@@ -2,12 +2,17 @@
 
 import logging
 
+from sqlalchemy.orm.exc import UnmappedInstanceError
+
 from ckan.lib.search import SearchIndexError
+from ckan.common import g
 
 import ckan.plugins as plugins
-import domain_object
-import package as _package
-import resource
+import ckan.model as model
+
+domain_object = model.domain_object
+_package = model.package
+resource = model.resource
 
 log = logging.getLogger(__name__)
 
@@ -24,22 +29,11 @@ class DomainObjectModificationExtension(plugins.SingletonPlugin):
 
     plugins.implements(plugins.ISession, inherit=True)
 
-    def notify_observers(self, func):
-        """
-        Call func(observer) for all registered observers.
-
-        :param func: Any callable, which will be called for each observer
-        :returns: EXT_CONTINUE if no errors encountered, otherwise EXT_STOP
-        """
-        for observer in plugins.PluginImplementations(
-                plugins.IDomainObjectModification):
-            func(observer)
-
     def before_commit(self, session):
         self.notify_observers(session, self.notify)
 
     def after_commit(self, session):
-        self.notify_observers(session, self.notify_after_commit)
+        pass
 
     def notify_observers(self, session, method):
         session.flush()
@@ -86,27 +80,24 @@ class DomainObjectModificationExtension(plugins.SingletonPlugin):
                 plugins.IDomainObjectModification):
             try:
                 observer.notify(entity, operation)
-            except SearchIndexError, search_error:
+            except SearchIndexError as search_error:
                 log.exception(search_error)
-                # Reraise, since it's pretty crucial to ckan if it can't index
-                # a dataset
-                raise
-            except Exception, ex:
-                log.exception(ex)
-                # Don't reraise other exceptions since they are generally of
-                # secondary importance so shouldn't disrupt the commit.
 
-    def notify_after_commit(self, entity, operation):
-        for observer in plugins.PluginImplementations(
-                plugins.IDomainObjectModification):
-            try:
-                observer.notify_after_commit(entity, operation)
-            except SearchIndexError, search_error:
-                log.exception(search_error)
+                # userobj must be available inside rendered error template,
+                # though it become unbounded after session rollback because
+                # of this error. Expunge will prevent `UnboundedInstanceError`
+                # raised from error template.
+                try:
+                    model.Session.expunge(g.userobj)
+                # AttributeError - there is no such prop in `g`
+                # UnmappedInstanceError - g.userobj is None or empty string.
+                except (AttributeError, UnmappedInstanceError):
+                    pass
+
                 # Reraise, since it's pretty crucial to ckan if it can't index
                 # a dataset
                 raise
-            except Exception, ex:
+            except Exception as ex:
                 log.exception(ex)
                 # Don't reraise other exceptions since they are generally of
                 # secondary importance so shouldn't disrupt the commit.

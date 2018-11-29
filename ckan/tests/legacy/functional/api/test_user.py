@@ -9,8 +9,9 @@ import ckan.authz as authz
 from ckan import model
 from ckan.lib.create_test_data import CreateTestData
 from ckan.tests.legacy import TestController as ControllerTestCase
-from ckan.tests.legacy.pylons_controller import PylonsTestCase
 from ckan.tests.legacy import url_for
+from ckan.tests import helpers
+
 import ckan.config.middleware
 from ckan.common import json
 
@@ -32,10 +33,10 @@ class TestUserApi(ControllerTestCase):
             },
             status=200,
         )
-        print response.json
+        print(response.json)
         assert set(response.json[0].keys()) == set(['id', 'name', 'fullname'])
         assert_equal(response.json[0]['name'], u'testsysadmin')
-        assert_equal(response.header('Content-Type'), 'application/json;charset=utf-8')
+        assert_equal(response.headers.get('Content-Type'), 'application/json;charset=utf-8')
 
     def test_autocomplete_multiple(self):
         response = self.app.get(
@@ -45,7 +46,7 @@ class TestUserApi(ControllerTestCase):
             },
             status=200,
         )
-        print response.json
+        print(response.json)
         assert_equal(len(response.json), 2)
 
     def test_autocomplete_limit(self):
@@ -57,11 +58,11 @@ class TestUserApi(ControllerTestCase):
             },
             status=200,
         )
-        print response.json
+        print(response.json)
         assert_equal(len(response.json), 1)
 
 
-class TestCreateUserApiDisabled(PylonsTestCase):
+class TestCreateUserApiDisabled(ControllerTestCase):
     '''
     Tests for the creating user when create_user_via_api is disabled.
     '''
@@ -69,26 +70,18 @@ class TestCreateUserApiDisabled(PylonsTestCase):
     @classmethod
     def setup_class(cls):
         CreateTestData.create()
-        cls._original_config = config.copy()
-        wsgiapp = ckan.config.middleware.make_app(
-            config['global_conf'], **config)
-        cls.app = paste.fixture.TestApp(wsgiapp)
         cls.sysadmin_user = model.User.get('testsysadmin')
-        PylonsTestCase.setup_class()
+        cls.app = helpers._get_test_app()
 
     @classmethod
     def teardown_class(cls):
-        config.clear()
-        config.update(cls._original_config)
-        PylonsTestCase.teardown_class()
-
         model.repo.rebuild_db()
 
     def test_user_create_api_enabled_sysadmin(self):
         params = {
             'name': 'testinganewusersysadmin',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post(
             '/api/3/action/user_create',
@@ -102,7 +95,7 @@ class TestCreateUserApiDisabled(PylonsTestCase):
         params = {
             'name': 'testinganewuseranon',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post('/api/3/action/user_create', json.dumps(params),
                             expect_errors=True)
@@ -110,7 +103,7 @@ class TestCreateUserApiDisabled(PylonsTestCase):
         assert res_dict['success'] is False
 
 
-class TestCreateUserApiEnabled(PylonsTestCase):
+class TestCreateUserApiEnabled(ControllerTestCase):
     '''
     Tests for the creating user when create_user_via_api is enabled.
     '''
@@ -118,27 +111,18 @@ class TestCreateUserApiEnabled(PylonsTestCase):
     @classmethod
     def setup_class(cls):
         CreateTestData.create()
-        cls._original_config = config.copy()
-        config['ckan.auth.create_user_via_api'] = True
-        wsgiapp = ckan.config.middleware.make_app(
-            config['global_conf'], **config)
-        cls.app = paste.fixture.TestApp(wsgiapp)
-        PylonsTestCase.setup_class()
         cls.sysadmin_user = model.User.get('testsysadmin')
+        cls.app = helpers._get_test_app()
 
     @classmethod
     def teardown_class(cls):
-        config.clear()
-        config.update(cls._original_config)
-        PylonsTestCase.teardown_class()
-
         model.repo.rebuild_db()
 
     def test_user_create_api_enabled_sysadmin(self):
         params = {
             'name': 'testinganewusersysadmin',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post(
             '/api/3/action/user_create',
@@ -147,18 +131,19 @@ class TestCreateUserApiEnabled(PylonsTestCase):
         res_dict = res.json
         assert res_dict['success'] is True
 
+    @helpers.change_config('ckan.auth.create_user_via_api', True)
     def test_user_create_api_enabled_anon(self):
         params = {
             'name': 'testinganewuseranon',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post('/api/3/action/user_create', json.dumps(params))
         res_dict = res.json
         assert res_dict['success'] is True
 
 
-class TestCreateUserWebDisabled(PylonsTestCase):
+class TestCreateUserWebDisabled(ControllerTestCase):
     '''
     Tests for the creating user by create_user_via_web is disabled.
     '''
@@ -166,27 +151,19 @@ class TestCreateUserWebDisabled(PylonsTestCase):
     @classmethod
     def setup_class(cls):
         CreateTestData.create()
-        cls._original_config = config.copy()
-        config['ckan.auth.create_user_via_web'] = False
-        wsgiapp = ckan.config.middleware.make_app(
-            config['global_conf'], **config)
-        cls.app = paste.fixture.TestApp(wsgiapp)
+        cls.app = helpers._get_test_app()
         cls.sysadmin_user = model.User.get('testsysadmin')
-        PylonsTestCase.setup_class()
 
     @classmethod
     def teardown_class(cls):
-        config.clear()
-        config.update(cls._original_config)
-        PylonsTestCase.teardown_class()
-
         model.repo.rebuild_db()
 
+    @helpers.change_config('ckan.auth.create_user_via_web', False)
     def test_user_create_api_disabled(self):
         params = {
             'name': 'testinganewuser',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post('/api/3/action/user_create', json.dumps(params),
                             expect_errors=True)
@@ -194,7 +171,7 @@ class TestCreateUserWebDisabled(PylonsTestCase):
         assert res_dict['success'] is False
 
 
-class TestCreateUserWebEnabled(PylonsTestCase):
+class TestCreateUserWebEnabled(ControllerTestCase):
     '''
     Tests for the creating user by create_user_via_web is enabled.
     '''
@@ -202,27 +179,19 @@ class TestCreateUserWebEnabled(PylonsTestCase):
     @classmethod
     def setup_class(cls):
         CreateTestData.create()
-        cls._original_config = config.copy()
-        config['ckan.auth.create_user_via_web'] = True
-        wsgiapp = ckan.config.middleware.make_app(
-            config['global_conf'], **config)
-        cls.app = paste.fixture.TestApp(wsgiapp)
+        cls.app = helpers._get_test_app()
         cls.sysadmin_user = model.User.get('testsysadmin')
-        PylonsTestCase.setup_class()
 
     @classmethod
     def teardown_class(cls):
-        config.clear()
-        config.update(cls._original_config)
-        PylonsTestCase.teardown_class()
-
         model.repo.rebuild_db()
 
+    @helpers.change_config('ckan.auth.create_user_via_web', True)
     def test_user_create_api_disabled(self):
         params = {
             'name': 'testinganewuser',
             'email': 'testinganewuser@ckan.org',
-            'password': 'random',
+            'password': 'TestPassword1',
         }
         res = self.app.post('/api/3/action/user_create', json.dumps(params),
                             expect_errors=True)
@@ -250,7 +219,7 @@ class TestUserActions(object):
         data_dict = {
             'name': 'a-new-user',
             'email': 'a.person@example.com',
-            'password': 'supersecret',
+            'password': 'TestPassword1',
         }
 
         user_dict = logic.get_action('user_create')(context, data_dict)

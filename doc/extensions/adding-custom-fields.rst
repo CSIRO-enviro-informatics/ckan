@@ -62,7 +62,7 @@ Adding custom fields to datasets
 
 Create a new plugin named ``ckanext-extrafields`` and create a class named
 ``ExampleIDatasetFormPlugins`` inside
-``ckanext-extrafields/ckanext/extrafields/plugins.py`` that implements the
+``ckanext-extrafields/ckanext/extrafields/plugin.py`` that implements the
 ``IDatasetForm`` interface and inherits from ``SingletonPlugin`` and
 ``DefaultDatasetForm``.
 
@@ -302,6 +302,11 @@ special schema fields ``'__before'`` or ``'__after'`` to have them
 run before or after all the other validation takes place to avoid
 the problem of working with partially-validated data.
 
+The validator has to be registered. Example:
+
+.. literalinclude:: ../../ckanext/example_ivalidators/plugin.py
+    :start-after: from ckan.plugins.toolkit import Invalid
+    :end-before: def equals_fortytwo(value):
 
 Tag vocabularies
 ----------------

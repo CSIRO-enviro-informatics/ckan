@@ -24,6 +24,7 @@ of the revision history, rather than a feed of datasets.
 import logging
 import urlparse
 
+from six import text_type
 import webhelpers.feedgenerator
 
 import ckan.lib.base as base
@@ -400,8 +401,7 @@ class FeedController(base.BaseController):
 
             feed.add_item(
                 title=pkg.get('title', ''),
-                link=self.base_url + h.url_for(controller='package',
-                                               action='read',
+                link=self.base_url + h.url_for('dataset.read',
                                                id=pkg['id']),
                 description=pkg.get('notes', ''),
                 updated=h.date_str_to_datetime(pkg.get('metadata_modified')),
@@ -411,12 +411,13 @@ class FeedController(base.BaseController):
                 author_email=pkg.get('author_email', ''),
                 categories=[t['name'] for t in pkg.get('tags', [])],
                 enclosure=webhelpers.feedgenerator.Enclosure(
-                    self.base_url + h.url_for(controller='api',
-                                              register='package',
-                                              action='show',
-                                              id=pkg['name'],
-                                              ver='2'),
-                    unicode(len(json.dumps(pkg))),   # TODO fix this
+                    h.url_for(controller='api',
+                              register='package',
+                              action='show',
+                              id=pkg['name'],
+                              ver='3',
+                              qualified=True),
+                    text_type(len(json.dumps(pkg))),   # TODO fix this
                     u'application/json'),
                 **additional_fields
             )

@@ -57,8 +57,8 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
     for plugin in PluginImplementations(IMiddleware):
         app = plugin.make_middleware(app, config)
 
+    app = common_middleware.CloseWSGIInputMiddleware(app, config)
     app = common_middleware.RootPathMiddleware(app, config)
-
     # Routing/Session/Cache Middleware
     app = RoutesMiddleware(app, config['routes.map'])
     # we want to be able to retrieve the routes middleware to be able to update
@@ -75,6 +75,8 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
                                     cleanup_pylons_response_string)
 
     # Fanstatic
+    fanstatic_enable_rollup = asbool(app_conf.get('fanstatic_enable_rollup',
+                                                  False))
     if asbool(config.get('debug', False)):
         fanstatic_config = {
             'versioning': True,
@@ -82,6 +84,7 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
             'minified': False,
             'bottom': True,
             'bundle': False,
+            'rollup': fanstatic_enable_rollup,
         }
     else:
         fanstatic_config = {
@@ -90,6 +93,7 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
             'minified': True,
             'bottom': True,
             'bundle': True,
+            'rollup': fanstatic_enable_rollup,
         }
     root_path = config.get('ckan.root_path', None)
     if root_path:
@@ -134,9 +138,10 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
     )
 
     # Establish the Registry for this application
-    app = RegistryManager(app)
-
-    app = common_middleware.I18nMiddleware(app, config)
+    # The RegistryManager includes code to pop
+    # registry values after the stream has completed,
+    # so we need to prevent this with `streaming` set to True.
+    app = RegistryManager(app, streaming=True)
 
     if asbool(static_files):
         # Serve static files
@@ -154,7 +159,7 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
             path = os.path.join(storage_directory, 'storage')
             try:
                 os.makedirs(path)
-            except OSError, e:
+            except OSError as e:
                 # errno 17 is file already exists
                 if e.errno != 17:
                     raise
@@ -172,10 +177,6 @@ def make_pylons_stack(conf, full_stack=True, static_files=True,
                                     cache_max_age=static_max_age)
                 )
         app = Cascade(extra_static_parsers + static_parsers)
-
-    # Page cache
-    if asbool(config.get('ckan.page_cache_enabled')):
-        app = common_middleware.PageCacheMiddleware(app, config)
 
     # Tracking
     if asbool(config.get('ckan.tracking_enabled', 'false')):

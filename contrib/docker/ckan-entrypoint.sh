@@ -9,8 +9,10 @@ set -e
 : ${CKAN_SOLR_URL:=}
 # URL for redis (required unless linked to a container called 'redis')
 : ${CKAN_REDIS_URL:=}
+# URL for datapusher (required unless linked to a container called 'datapusher')
+: ${CKAN_DATAPUSHER_URL:=}
 
-CONFIG="${CKAN_CONFIG}/ckan.ini"
+CONFIG="${CKAN_CONFIG}/production.ini"
 
 abort () {
   echo "$@" >&2
@@ -33,6 +35,14 @@ set_environment () {
   export MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
   export CKAN_DATAPUSHER_URL=${CKAN_DATAPUSHER_URL}
   export BYPASS_DB_INIT=${BYPASS_DB_INIT}
+  export CKAN_SITE_ID=${CKAN_SITE_ID}
+  export CKAN_DATAPUSHER_URL=${CKAN_DATAPUSHER_URL}
+  export CKAN_SMTP_SERVER=${CKAN_SMTP_SERVER}
+  export CKAN_SMTP_STARTTLS=${CKAN_SMTP_STARTTLS}
+  export CKAN_SMTP_USER=${CKAN_SMTP_USER}
+  export CKAN_SMTP_PASSWORD=${CKAN_SMTP_PASSWORD}
+  export CKAN_SMTP_MAIL_FROM=${CKAN_SMTP_MAIL_FROM}
+  export CKAN_MAX_UPLOAD_SIZE_MB=${CKAN_MAX_UPLOAD_SIZE_MB}
 }
 
 write_config () {
@@ -180,10 +190,8 @@ link_solr_url () {
   echo "http://${host}:${port}/solr/ckan"
 }
 
-link_redis_url () {
-  local host=$REDIS_PORT_6379_TCP_ADDR
-  local port=$REDIS_PORT_6379_TCP_PORT
-  echo "redis://${host}:${port}/1"
+write_config () {
+  ckan-paster make-config --no-interactive ckan "$CONFIG"
 }
 
 # If we don't already have a config file, bootstrap
@@ -283,4 +291,5 @@ ckan-paster --plugin=ckan user add admin password=${CKAN_ADMIN_PASSWORD} email=O
 create_org_and_user_membership
 create_local_org
 ckan-paster --plugin=ckan sysadmin add admin -c "${CKAN_CONFIG}/ckan.ini" || true
+
 exec "$@"
