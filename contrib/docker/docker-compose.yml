@@ -23,26 +23,25 @@ services:
       - redis
     environment:
       # Defaults work with linked containers, change to use own Postgres, SolR, Redis or Datapusher
-      - DB_PORT_5432_TCP_ADDR=db
-      - DB_PORT_5432_TCP_PORT=5432
-      - SOLR_PORT_8983_TCP_ADDR=solr
-      - SOLR_PORT_8983_TCP_PORT=8983
-      - CKAN_SOLR_URL=http://${SOLR_PORT_8983_TCP_ADDR}:${SOLR_PORT_8983_TCP_PORT}/solr/ckan
-      - REDIS_PORT_6379_TCP_PORT=6379
-      - REDIS_PORT_6379_TCP_ADDR=redis
-      - CKAN_SITE_URL=${CKAN_SITE_BASE_URL}
-      - CKAN_PORT=$CKAN_PORT
       - CKAN_ADMIN_PASSWORD=${CKAN_ADMIN_PASSWORD}
-      - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
+      - CKAN_DATAPUSHER_URL=http://datapusher:8800
       - CKAN_DATASTORE_WRITE_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/datastore
       - CKAN_DATASTORE_READ_URL=postgresql://datastore_ro:${DATASTORE_READONLY_PASSWORD}@db/datastore
       - CKAN_REDIS_URL=redis://redis:6379/1
-      - CKAN_DATAPUSHER_URL=http://datapusher:8800
+      - CKAN_PORT=$CKAN_PORT
+      - CKAN_SOLR_URL=http://${SOLR_PORT_8983_TCP_ADDR}:${SOLR_PORT_8983_TCP_PORT}/solr/ckan
       - CKAN_SITE_URL=${CKAN_SITE_URL}
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:${POSTGRES_PASSWORD}@db/ckan
       - CKAN_MAX_UPLOAD_SIZE_MB=${CKAN_MAX_UPLOAD_SIZE_MB}
+      - DATASTORE_READONLY_PASSWORD=$DATASTORE_READONLY_PASSWORD
+      - DB_PORT_5432_TCP_ADDR=db
+      - DB_PORT_5432_TCP_PORT=5432
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - REDIS_PORT_6379_TCP_PORT=6379
+      - REDIS_PORT_6379_TCP_ADDR=redis
+      - SOLR_PORT_8983_TCP_ADDR=solr
+      - SOLR_PORT_8983_TCP_PORT=8983
     volumes:
       #- ckan_config:/etc/ckan
       - ckan_home:/usr/lib/ckan
