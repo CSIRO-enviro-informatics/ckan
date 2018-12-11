@@ -47,15 +47,35 @@ ADD . $CKAN_VENV/src/ckan/
 RUN ckan-pip install -U pip && \
     ckan-pip install --upgrade --no-cache-dir -r $CKAN_VENV/src/ckan/requirement-setuptools.txt && \
     ckan-pip install --upgrade --no-cache-dir -r $CKAN_VENV/src/ckan/requirements.txt && \
-    ckan-pip install -e $CKAN_VENV/src/ckan/ && \
-    ln -s $CKAN_VENV/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini && \
-    cp -v $CKAN_VENV/src/ckan/contrib/docker/ckan-entrypoint.sh /ckan-entrypoint.sh && \
-    chmod +x /ckan-entrypoint.sh && \
-    chown -R ckan:ckan $CKAN_HOME $CKAN_VENV $CKAN_CONFIG $CKAN_STORAGE_PATH
+    ckan-pip install -e $CKAN_VENV/src/ckan/ 
+#    ln -s $CKAN_VENV/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini && \
+#    cp -v $CKAN_VENV/src/ckan/contrib/docker/ckan-entrypoint.sh /ckan-entrypoint.sh && \
+#    chmod +x /ckan-entrypoint.sh && \
+#    chown -R ckan:ckan $CKAN_HOME $CKAN_VENV $CKAN_CONFIG $CKAN_STORAGE_PATH
+#ENTRYPOINT ["/ckan-entrypoint.sh"]
 
-ENTRYPOINT ["/ckan-entrypoint.sh"]
+# SetUp EntryPoint
+COPY ./contrib/docker/wait-for-it.sh /
+RUN chmod +x /wait-for-it.sh
+RUN mkdir /entrypoint
+COPY ./contrib/docker/ckan-entrypoint.sh /entrypoint/
+RUN chmod +x /entrypoint/ckan-entrypoint.sh
+RUN ln -s /entrypoint/ckan-entrypoint.sh  /
+RUN ln -s $CKAN_VENV/src/ckan/ckan/config/who.ini $CKAN_CONFIG/who.ini
 
-USER ckan
+
+# Add Tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--", "/ckan-entrypoint.sh"]
+
+# Volumes
+VOLUME ["/entrypoint"]
+VOLUME ["/etc/ckan"]
+VOLUME ["/usr/lib/ckan"]
+VOLUME ["/var/lib/ckan"]
+
 EXPOSE 5000
 
 CMD ["ckan-paster","serve","/etc/ckan/production.ini"]

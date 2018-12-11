@@ -63,5 +63,10 @@ if [ -z "$CKAN_DATAPUSHER_URL" ]; then
 fi
 
 set_environment
+
+./wait-for-it.sh -t 0 -h solr -p 8983 -- echo "solr is up"
+./wait-for-it.sh -t 0 -h db -p 5432 -- echo "db is up"
+
+
 ckan-paster --plugin=ckan db init -c "${CKAN_CONFIG}/production.ini"
 exec "$@"
