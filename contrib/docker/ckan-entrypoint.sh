@@ -38,7 +38,44 @@ set_environment () {
 
 write_config () {
   ckan-paster make-config --no-interactive ckan "$CONFIG"
+
+  # The variables above will be used by CKAN, but
+  # in case want to use the config from ckan.ini use this
+  ckan-paster --plugin=ckan config-tool "$CONFIG" -e \
+      "sqlalchemy.url = ${CKAN_SQLALCHEMY_URL}" \
+      "solr_url = ${CKAN_SOLR_URL}" \
+      "ckan.redis.url = ${CKAN_REDIS_URL}" \
+      "ckan.storage_path = ${CKAN_STORAGE_PATH}" \
+      "ckan.site_url = ${CKAN_SITE_URL}"
+
+  ckan-paster --plugin=ckan config-tool "$CONFIG" "sqlalchemy.url = $(link_postgres_url)"
 }
+
+link_datastore_postgres_url () {
+  local user=$DB_ENV_POSTGRES_USER
+  local pass=$DB_ENV_POSTGRES_PASSWORD
+  local db=datastore_default
+  local host=$DB_PORT_5432_TCP_ADDR
+  local port=$DB_PORT_5432_TCP_PORT
+  echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
+}
+
+link_postgres_url () {
+  local user=$DB_ENV_POSTGRES_USER
+  local pass=$DB_ENV_POSTGRES_PASSWORD
+  local db=$DB_ENV_POSTGRES_DB
+  local host=$DB_PORT_5432_TCP_ADDR
+  local port=$DB_PORT_5432_TCP_PORT
+  echo "postgresql://${user}:${pass}@${host}:${port}/${db}"
+}
+
+link_solr_url () {
+  local host=$SOLR_PORT_8983_TCP_ADDR
+  local port=$SOLR_PORT_8983_TCP_PORT
+  echo "http://${host}:${port}/solr/ckan"
+}
+
+
 
 # If we don't already have a config file, bootstrap
 if [ ! -e "$CONFIG" ]; then
