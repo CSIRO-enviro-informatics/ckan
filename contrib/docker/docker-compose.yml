@@ -40,21 +40,27 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - REDIS_PORT_6379_TCP_PORT=6379
       - REDIS_PORT_6379_TCP_ADDR=redis
-      - SOLR_PORT_8983_TCP_ADDR=solr
-      - SOLR_PORT_8983_TCP_PORT=8983
+    ports:
+        - ${CKAN_PORT:-5000}:5000
     volumes:
       #- ckan_config:/etc/ckan
-      - ckan_home:/usr/lib/ckan
-      - ckan_storage:/var/lib/ckan
+      #- ckan_home:/usr/lib/ckan
+      #- ckan_storage:/var/lib/ckan
       - type: volume
         source: ckan_config
         target: /etc/ckan
       - type: volume
+        source: ckan_home
+        target: /usr/lib/ckan
+      - type: volume
         source: ckan_src
         target: /usr/lib/ckan/default/src
-      - type: bind
-        source: ${HOST_FILE_STORE}
+      - type: volume
+        source: ckan_storage
         target: /var/lib/ckan
+      #- type: bind
+      #  source: ${HOST_FILE_STORE}
+      #  target: /var/lib/ckan
       - type: volume
         source: ckan_entrypoint
         target: /entrypoint
